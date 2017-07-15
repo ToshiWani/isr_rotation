@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <h2>Email Configuration</h2>
+        <hr/>
+        <form class="form-horizontal" method="post">
+            <div class="form-group">
+                <label for="FromAddress" class="col-sm-2 control-label">From Address</label>
+                <div class="col-sm-10">
+                    <input type="email" class="form-control" id="FromAddress" name="email_from_address"
+                           value="{{ from_address }}"
+                           placeholder="Enter sender's email address">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="FromName" class="col-sm-2 control-label">From Name</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="FromName" name="email_from_name"
+                           value="{{ name }}"
+                           placeholder="Enter sender's name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="EmailSubject" class="col-sm-2 control-label">Subject</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="EmailSubject" name="email_subject"
+                           placeholder="Enter email subject"
+                           value="{{ subject }}">
+                    <span class="help-block">Hint: The { name } placeholder is available.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="EmailBody" class="col-sm-2 control-label">Body</label>
+                <div class="col-sm-10">
+                    <textarea  class="form-control" id="EmailBody" rows="6" name="email_body">{{ body }}</textarea>
+                    <span class="help-block">Hint: The { name } and { ip } placeholder is available.</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,272 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h2>Main Page</h2>
+    </div>
+</div>
+
+<hr/>
+
+<div class="row">
+    <div class="col-xs-6">
+        <a href="#" class="btn btn-default" data-toggle="modal" data-target="#resendModal">
+            Resend <i class="glyphicon glyphicon-send"></i>
+        </a>
+        <a href="#" class="btn btn-default" data-toggle="modal" data-target="#moveNextModal">
+            Move Next User <i class="glyphicon glyphicon-step-forward"></i>
+        </a>
+    </div>
+    <div class="col-xs-6">
+        <a href="#" class="btn btn-primary pull-right" id="BtnSave">
+            Save <i class="glyphicon glyphicon-ok"></i>
+        </a>
+        <span class="pull-right">&nbsp;</span>
+        <a href="#" class="btn btn-default pull-right" onclick="location.reload()">
+            Reset <i class="glyphicon glyphicon-repeat"></i>
+        </a>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-sm-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Off-Duty Users
+                <a href="#" data-toggle="modal" data-target="#addUserModal" class="btn btn-info btn-xs pull-right">
+                    <i class="glyphicon glyphicon-plus"></i>
+                </a>
+            </div>
+            <ul id="offDutyTable" class="list-group connectedSortable" style="min-height:60px;">
+                {% for u in users %}
+                    {% if u.on_duty == False %}
+                        <li class="list-group-item user-list" data-userid="{{ u.id }}">
+                            <i class="glyphicon glyphicon-move" aria-hidden="true" role="button">&nbsp;</i>
+                            {{ u.name }}
+                            <a href="#" data-userid="{{ u.id }}" data-toggle="modal" data-target="#deleteUserModal" class="btn-delete-user pull-right btn btn-default btn-xs">
+                                <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                            </a>
+                            <a href="#" data-userid="{{ u.id }}" data-toggle="modal" data-target="#updateUserModel" class="btn-update-user pull-right btn btn-default btn-xs">
+                                <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                            </a>
+                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="btn-edit-vac pull-right btn btn-default btn-xs">
+                                <i class="glyphicon glyphicon-calendar" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-sm-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">On-Duty Users</div>
+        <ul id="onDutyTable" class="list-group connectedSortable" style="min-height:60px;">
+            {% for u in users %}
+                {% if u.on_duty == True %}
+                    <li class="list-group-item user-list" data-userid="{{ u.id }}" data-seq="{{ u.seq }}">
+                        <i class="glyphicon glyphicon-move" aria-hidden="true" role="button">&nbsp;</i>
+                        {{ u.name }}
+                        <a href="#" data-userid="{{ u.id }}" data-toggle="modal" data-target="#deleteUserModal" class="btn-delete-user pull-right btn btn-default btn-xs">
+                            <i class="glyphicon glyphicon-trash" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" data-userid="{{ u.id }}" data-toggle="modal" data-target="#updateUserModel" class="btn-update-user pull-right btn btn-default btn-xs">
+                            <i class="glyphicon glyphicon-pencil" aria-hidden="true"></i>
+                        </a>
+                        <a href="/vacation/{{ u.id }}" class="btn-edit-vac pull-right btn btn-default btn-xs">
+                            <i class="glyphicon glyphicon-calendar" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    </div>
+</div>
+
+
+<!-- Modal (ADD) -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Add New User</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" id="addNewUserForm">
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="name" placeholder="Jane Doe">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+                <input type="email" class="form-control" name="email" placeholder="jane.doe@example.com">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submitAddNewUser">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal (UPDATE) -->
+<div class="modal fade" id="updateUserModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Update User</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="updateUserForm">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" name="name" placeholder="Jane Doe" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <label class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" name="email" placeholder="jane.doe@example.com" value="">
+                        </div>
+                    </div>
+                    <input type="hidden" id="updateUserId" value="" name="id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitUpdateUser">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal (DELETE) -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Confirm</h4>
+            </div>
+            <div class="modal-body">
+                <p>You are about to delete a user below, this procedure is irreversible</p>
+                <blockquote id="userNameEmail"></blockquote>
+                <p>Do you want to proceed?</p>
+                <form class="form-inline" id="deleteUserForm">
+                    <input type="hidden" name="deleteUserIds" id="deleteUserId" value="">
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="submitDeleteUser">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal (Vacation) -->
+<div class="modal fade" id="editVacation" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Edit Vacation</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>From</label>
+                            <input type="text" id="startVac" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>To</label>
+                            <input type="text" id="endVac" class="form-control">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitVacation">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal (MOVE NEXT) -->
+<div class="modal fade" id="moveNextModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to move next?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-warning" data-dismiss="modal" id="submitMoveNext">Move Next User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal (RESEND) -->
+<div class="modal fade" id="resendModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure to resend an email?</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" id="submitResend">Resend</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

@@ -1,0 +1,7 @@
+rotation.db
+venv
+*.egg-info
+node_modules
+*.pyc
+*.idea
+isr_rotation/config.py

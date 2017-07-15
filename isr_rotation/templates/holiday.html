@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="row">
+    <h2>Holidays</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Start</th>
+            <th>End</th>
+            <th>Remarks</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <form method="post" action="/holiday/add">
+                <td><input type="text" id="startVac" name="start_date" class="form-control"></td>
+                <td><input type="text" id="endVac" name="end_date" class="form-control"></td>
+                <td><input type="text" id="remarks" name="remarks" class="form-control"></td>
+                <td><button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button></td>
+            </form>
+        </tr>
+        {% for m in model %}
+        <tr class="{{ 'text-muted' if m.active else '' }}">
+            <form method="post" action="/holiday/delete">
+                <td>{{ m.start }}</td>
+                <td>{{ m.end }}</td>
+                <td>{{ m.remarks }}</td>
+                <td><button class="btn btn-danger"><i class="glyphicon glyphicon-trash"></i></button></td>
+                <input type="hidden" value="{{ m.id }}" name="id">
+            </form>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+</div>
+
+
+{% endblock %}
