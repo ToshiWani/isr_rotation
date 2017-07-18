@@ -1,5 +1,6 @@
 #!/bin/sh
+cd /var/www/html/isr_rotation
 python <<EOF
-from flask_rotation.mail_sender import *
+from isr_rotation.mail_sender import *
 send()
 EOF
