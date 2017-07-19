@@ -12,9 +12,9 @@
                     var elem = 'li[data-userid=' + u.user_id + ']';
 
                     if(u.is_current){
-                        $(elem).append('<span class="badge" style="margin-right:6px;">Current</span>');
+                        $(elem).append('<span class="badge">Current</span>');
                     } else if (u.is_next) {
-                        $(elem).append('<span class="badge" style="margin-right:6px;">Next</span>');
+                        $(elem).append('<span class="badge">Next</span>');
                     }
 
                     if (u.is_vacation){
@@ -141,11 +141,12 @@
             });
         });
 
-        // Update sequences
+        //Update sequences
         $("#onDutyTable, #offDutyTable").sortable({
             connectWith: ".connectedSortable",
-            dropOnEmpty: true
-        }).disableSelection();
+            dropOnEmpty: true,
+            cancel: '.collection-header'
+        });
 
     })(UserManager);
 
