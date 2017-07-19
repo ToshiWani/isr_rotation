@@ -100,21 +100,29 @@
             var onDuty = [];
 
             $('#onDutyTable li').each(function(index, val){
-                console.log('On: User ID =>', $(val).data('userid'), 'Index =>', index);
-                onDuty.push({
-                    'userid': $(val).data('userid'),
-                    'index': index
-                });
+
+                if(index > 0){
+                    index --;
+                    console.log('On: User ID =>', $(val).data('userid'), 'Index =>', index);
+                    onDuty.push({
+                        'userid': $(val).data('userid'),
+                        'index': index
+                    });
+                }
             });
 
             var offDuty = [];
 
             $('#offDutyTable li').each(function(index, val){
-                console.log('Off: User ID =>', $(val).data('userid'), 'Index =>', index);
-                offDuty.push({
-                    userid: $(val).data('userid'),
-                    index: index
-                });
+
+                if(index > 0){
+                    index --;
+                    console.log('Off: User ID =>', $(val).data('userid'), 'Index =>', index);
+                    offDuty.push({
+                        userid: $(val).data('userid'),
+                        index: index
+                    });
+                }
             });
 
             $.ajax({
