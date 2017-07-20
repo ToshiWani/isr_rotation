@@ -1,41 +1,65 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    <h2>Vacation - {{ user.name }}</h2>
-
     <div class="row">
-        <div class="col-lg-6">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <form method="post">
-                        <tr>
-                            <td><input type="text" id="startVac" name="start_date" class="form-control"></td>
-                            <td><input type="text" id="endVac" name="end_date" class="form-control"></td>
-                            <td><button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button></td>
-                        </tr>
-                    </form>
-                    {% for m in model %}
-                    <tr>
-                        <td>{{ m.start_date }}</td>
-                        <td>{{ m.end_date }}</td>
-                        <td>
-                            <a href="/vacation/delete/{{ m.userid }}/{{ m.id }}" data-userid="{{ m.id }}" class="btn btn-danger">
-                                <i class="glyphicon glyphicon-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="col s12">
+
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Vacation - {{ user.name }}</span>
+                    <table>
+                        <tbody>
+                        <form method="post">
+                            <tr>
+                                <td>
+                                    <div class="input-field">
+                                        <input type="text" id="startVac" name="start_date" class="validate">
+                                        <label>Start Date</label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="input-field">
+                                        <input type="text" id="endVac" name="end_date" class="validate">
+                                        <label>End Date</label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="submit" class="waves-effect waves-light btn blue right"><i
+                                            class="material-icons left">add</i>Add
+                                    </button>
+                                </td>
+                            </tr>
+                        </form>
+                        {% for m in model %}
+                            <tr>
+                                <td>{{ m.start_date }}</td>
+                                <td>{{ m.end_date }}</td>
+                                <td>
+                                    <a href="/vacation/delete/{{ m.userid }}/{{ m.id }}" data-userid="{{ m.id }}"
+                                       class="waves-effect waves-light btn-flat right">
+                                        Delete <i class="material-icons red-text left">delete</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+            </div>
+
         </div>
     </div>
+
+    <div class="row">
+        <div class="col s12">
+            <a href="/" type="button" class="modal-action modal-close waves-effect waves-blue btn-flat right">
+                <i class="material-icons teal-text left">check</i>OK
+            </a>
+        </div>
+    </div>
+
 {% endblock %}
 
 

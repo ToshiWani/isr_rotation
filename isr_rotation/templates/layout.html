@@ -19,7 +19,7 @@
 
 <!-- Dropdown Structure -->
 <ul id="ddConfig" class="dropdown-content">
-    <li><a href="/holiday" class="blue-text">Set Holidays</a></li>
+    <li><a href="/holiday" class="blue-text">Holidays</a></li>
     <li><a href="/email-config" class="blue-text">Email</a></li>
     <li class="divider"></li>
     <li><a href="/log" class="blue-text">System Log</a></li>
@@ -30,13 +30,12 @@
         <ul class="right hide-on-med-and-down ">
             <li><a href="/">Main Page</a></li>
             <!-- Dropdown Trigger -->
-            <li><a class="dropdown-button" href="#!" data-activates="ddConfig">Dropdown<i class="material-icons right">arrow_drop_down</i></a>
+            <li><a class="dropdown-button" href="#!" data-activates="ddConfig">Configuration
+                <i class="material-icons right">arrow_drop_down</i></a>
             </li>
         </ul>
     </div>
 </nav>
-
-
 
 
 <div class="container">
@@ -58,8 +57,6 @@
 <script src="{{ url_for('static', filename='app.js') }}"></script>
 
 {% block scripts %}{% endblock %}
-
-
 
 
 </body>
