@@ -14,11 +14,11 @@
                     if (u.is_current) {
                         $(elem).append('<span class="badge orange-text">Current</span>');
                     } else if (u.is_next) {
-                        $(elem).append('<span class="badge">Next</span>');
+                        $(elem).append('<span class="badge blue-text">Next</span>');
                     }
 
                     if (u.is_vacation) {
-                        $(elem).addClass('grey lighten-2');
+                        $(elem).addClass('grey lighten-2').append('<span class="badge grey-text">Vacation</span>');
                     }
                 });
             });
