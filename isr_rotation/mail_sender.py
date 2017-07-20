@@ -62,15 +62,8 @@ def _send_email(preview_only=False, ignore_weekend=False):
     return res.ok
 
 
-def send(preview_only=False):
-    result = _send_email(preview_only)
-    # result = _send_email(True, True)
-    if result:
-        db.move_next()
-    return result
-
-
 def resend(preview_only=False):
+    Logger.debug('Resending email')
     return _send_email(preview_only)
     # return _send_email(True, True)
 
