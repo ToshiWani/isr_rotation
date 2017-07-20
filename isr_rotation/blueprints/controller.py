@@ -129,7 +129,7 @@ def update_email_config():
                            request.form['email_from_name'],
                            request.form['email_subject'],
                            request.form['email_body'])
-    return redirect(location='/email-config')
+    return redirect(location='/')
 
 
 # endregion

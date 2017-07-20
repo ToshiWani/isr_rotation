@@ -1,51 +1,62 @@
 {% extends "layout.html" %}
 {% block body %}
 
-<div class="row">
-    <div class="col-lg-12">
-        <h2>Email Configuration</h2>
-        <hr/>
-        <form class="form-horizontal" method="post">
-            <div class="form-group">
-                <label for="FromAddress" class="col-sm-2 control-label">From Address</label>
-                <div class="col-sm-10">
-                    <input type="email" class="form-control" id="FromAddress" name="email_from_address"
-                           value="{{ from_address }}"
-                           placeholder="Enter sender's email address">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Email Configuration</span>
+                    <form method="post">
+                        <div class="input-field">
+                            <label for="FromAddress">From Address</label>
+                            <input type="email" class="validate tooltipped" id="FromAddress"
+                                   name="email_from_address"
+                                   data-tooltip="Please enter sender's email address"
+                                   value="{{ from_address }}">
+                        </div>
+                        <div class="input-field">
+                            <label for="FromName">From Name</label>
+                            <input type="text" class="validate tooltipped" id="FromName"
+                                   name="email_from_name"
+                                   data-tooltip="Please enter sender's name"
+                                   value="{{ name }}">
+                        </div>
+                        <div class="input-field">
+                            <label for="EmailSubject">Subject</label>
+                            <input type="text" class="validate tooltipped" id="EmailSubject"
+                                   name="email_subject"
+                                   data-tooltip="Hint: The { name } placeholder is available."
+                                   value="{{ subject }}">
+                        </div>
+                        <div class="input-field">
+                            <label for="EmailBody">Body</label>
+                            <textarea class="materialize-textarea tooltipped" id="EmailBody"
+                                      name="email_body"
+                                      data-tooltip="Hint: The { name } and { ip } placeholder is available."
+                                      style="height: 6rem;">{{ body }}</textarea>
+                        </div>
+                        <div class="card-action">
+                            <button type="submit" class="waves-effect waves-light btn blue right">
+                                <i class="material-icons left">save</i>Save
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="FromName" class="col-sm-2 control-label">From Name</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="FromName" name="email_from_name"
-                           value="{{ name }}"
-                           placeholder="Enter sender's name">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="EmailSubject" class="col-sm-2 control-label">Subject</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="EmailSubject" name="email_subject"
-                           placeholder="Enter email subject"
-                           value="{{ subject }}">
-                    <span class="help-block">Hint: The { name } placeholder is available.</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="EmailBody" class="col-sm-2 control-label">Body</label>
-                <div class="col-sm-10">
-                    <textarea  class="form-control" id="EmailBody" rows="6" name="email_body">{{ body }}</textarea>
-                    <span class="help-block">Hint: The { name } and { ip } placeholder is available.</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
 
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+
+            $('.tooltipped').tooltip();
+
+
+        });
+    </script>
 {% endblock %}
