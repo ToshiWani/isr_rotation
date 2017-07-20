@@ -2,82 +2,103 @@
 {% block body %}
 
     <div class="row">
-        <div class="col-sm-12">
-            <h2>Main Page</h2>
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col s6">
+                            <a href="#resendModal" class="waves-effect btn-flat">
+                                <i class="material-icons left">send</i>
+                                Resend
+                            </a>
+                            <a href="#moveNextModal" class="waves-effect btn-flat">
+                                <i class="material-icons left">skip_next</i>
+                                Move Next User
+                            </a>
+                        </div>
+                        <div class="col s6">
+                            <a href="#" class="waves-effect waves-light btn orange right" id="BtnSave">
+                                <i class="material-icons left">save</i>
+                                Save
+                            </a>
+                            <span class="pull-right">&nbsp;</span>
+                            <a href="#" class="waves-effect btn-flat right" onclick="location.reload()">
+                                <i class="material-icons left">undo</i>
+                                Reset
+                            </a>
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col s6">
+                            <ul id="offDutyTable" class="collection with-header connectedSortable">
+                                <li class="collection-header grey">
+                                    <h4>
+                                        Off-Duty Users
+                                        <a href="#addUserModal" class="waves-effect waves-light btn blue right">
+                                            <i class="material-icons">person_add</i>
+                                        </a>
+                                    </h4>
+                                </li>
+                                {% for u in users %}
+                                    {% if u.on_duty == False %}
+                                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}">
+                                            <i class="material-icons left">drag_handle</i>
+                                            {{ u.name }}
+                                            <a href="#deleteUserModal" data-userid="{{ u.id }}"
+                                               class="btn-delete-user right">
+                                                <i class="material-icons">delete</i>
+                                            </a>
+                                            <a href="#updateUserModel" data-userid="{{ u.id }}"
+                                               class="btn-update-user right">
+                                                <i class="material-icons">mode_edit</i>
+                                            </a>
+                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
+                                                <i class="material-icons">date_range</i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col s6">
+                            <ul id="onDutyTable" class="collection with-header connectedSortable"
+                                style="min-height:60px;">
+                                <li class="collection-header blue">
+                                    <h4>
+                                        On-Duty Users
+                                    </h4>
+                                </li>
+                                {% for u in users %}
+                                    {% if u.on_duty == True %}
+                                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}"
+                                            data-seq="{{ u.seq }}">
+                                            <i class="material-icons left">drag_handle</i>
+                                            {{ u.name }}
+                                            <a href="#deleteUserModal" data-userid="{{ u.id }}"
+                                               class="btn-delete-user right">
+                                                <i class="material-icons">delete</i>
+                                            </a>
+                                            <a href="#updateUserModel" data-userid="{{ u.id }}"
+                                               class="btn-update-user right">
+                                                <i class="material-icons">mode_edit</i>
+                                            </a>
+                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
+                                                <i class="material-icons">date_range</i>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
 
-    <div class="row">
-        <div class="col s6">
-            <a href="#resendModal" class="waves-effect btn-flat "><i class="material-icons left">send</i>Resend</a>
-            <a href="#moveNextModal" class="waves-effect btn-flat "><i class="material-icons left">skip_next</i>Move Next User</a>
-        </div>
-        <div class="col s6">
-            <a href="#" class="waves-effect waves-light btn orange right" id="BtnSave"><i class="material-icons left">save</i>Save</a>
-            <span class="pull-right">&nbsp;</span>
-            <a href="#" class="waves-effect btn-flat right" onclick="location.reload()"><i class="material-icons left">undo</i>Reset</a>
-        </div>
-    </div>
 
-    <hr/>
-
-    <div class="row">
-        <div class="col s6">
-            <ul id="offDutyTable" class="collection with-header connectedSortable">
-                <li class="collection-header grey">
-                    <h4>
-                        Off-Duty Users
-                        <a href="#addUserModal" class="waves-effect waves-light btn blue right"><i class="material-icons">person_add</i></a>
-                    </h4>
-                </li>
-                {% for u in users %}
-                    {% if u.on_duty == False %}
-                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}">
-                            <i class="material-icons left">drag_handle</i>
-                            {{ u.name }}
-                            <a href="#deleteUserModal" data-userid="{{ u.id }}" class="btn-delete-user right">
-                                <i class="material-icons">delete</i>
-                            </a>
-                            <a href="#updateUserModel" data-userid="{{ u.id }}" class="btn-update-user right" >
-                                <i class="material-icons">mode_edit</i>
-                            </a>
-                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
-                                <i class="material-icons">date_range</i>
-                            </a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col s6">
-            <ul id="onDutyTable" class="collection with-header connectedSortable" style="min-height:60px;">
-                <li class="collection-header blue">
-                    <h4>
-                        On-Duty Users
-                    </h4>
-                </li>
-                {% for u in users %}
-                    {% if u.on_duty == True %}
-                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}" data-seq="{{ u.seq }}">
-                            <i class="material-icons left">drag_handle</i>
-                            {{ u.name }}
-                            <a href="#deleteUserModal" data-userid="{{ u.id }}" class="btn-delete-user right">
-                                <i class="material-icons">delete</i>
-                            </a>
-                            <a href="#updateUserModel" data-userid="{{ u.id }}" class="btn-update-user right" >
-                                <i class="material-icons">mode_edit</i>
-                            </a>
-                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
-                                <i class="material-icons">date_range</i>
-                            </a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-
-        </div>
-    </div>
 
 
 
@@ -104,7 +125,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="modal-action modal-close waves-effect btn-flat">Cancel</button>
-                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue" id="submitAddNewUser">Add</button>
+                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue"
+                        id="submitAddNewUser">Add
+                </button>
             </div>
         </div>
     </div>
@@ -125,7 +148,7 @@
                         </div>
 
                         <div class="input-field col s6">
-                            <input value="*"  type="email" class="validate" name="email" />
+                            <input value="*" type="email" class="validate" name="email"/>
                             <label class="active">Email</label>
                         </div>
                     </div>
@@ -134,8 +157,13 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="modal-action modal-close waves-effectmodal-action modal-close waves-effect waves-blue btn-flat btn-flat">Cancel</button>
-                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue" id="submitUpdateUser">Update</button>
+                <button type="button"
+                        class="modal-action modal-close waves-effectmodal-action modal-close waves-effect waves-blue btn-flat btn-flat">
+                    Cancel
+                </button>
+                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue"
+                        id="submitUpdateUser">Update
+                </button>
             </div>
         </div>
     </div>
@@ -160,7 +188,9 @@
 
             <div class="modal-footer">
                 <button type="button" class="modal-action modal-close waves-effect waves-blue btn-flat">Cancel</button>
-                <button type="button" class="modal-action modal-close waves-effect waves-light btn red" id="submitDeleteUser">Delete</button>
+                <button type="button" class="modal-action modal-close waves-effect waves-light btn red"
+                        id="submitDeleteUser">Delete
+                </button>
             </div>
         </div>
     </div>
@@ -175,7 +205,9 @@
             <p>Are you sure you want to move to the next next user?</p>
             <div class="modal-footer">
                 <button type="button" class="modal-action modal-close waves-effect waves-blue btn-flat">Cancel</button>
-                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue" id="submitMoveNext">Move Next User</button>
+                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue"
+                        id="submitMoveNext">Move Next User
+                </button>
             </div>
         </div>
     </div>
@@ -190,7 +222,9 @@
             <p>Are you sure you want to resend an email?</p>
             <div class="modal-footer">
                 <button type="button" class="modal-action modal-close waves-effect waves-blue btn-flat">Cancel</button>
-                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue" id="submitMoveNext">Resend</button>
+                <button type="button" class="modal-action modal-close waves-effect waves-light btn blue"
+                        id="submitMoveNext">Resend
+                </button>
             </div>
         </div>
     </div>
@@ -198,16 +232,16 @@
 
 
 {% block scripts %}
-<script>
-    $(document).ready(function(){
+    <script>
+        $(document).ready(function () {
 
-        $('#moveNextModal').modal();
-        $('#resendModal').modal();
-        $('#addUserModal').modal();
-        $('#updateUserModel').modal();
-        $('#deleteUserModal').modal();
+            $('#moveNextModal').modal();
+            $('#resendModal').modal();
+            $('#addUserModal').modal();
+            $('#updateUserModel').modal();
+            $('#deleteUserModal').modal();
 
-    });
-</script>
+        });
+    </script>
 {% endblock %}
 

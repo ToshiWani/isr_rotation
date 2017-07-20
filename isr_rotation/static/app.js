@@ -170,17 +170,11 @@
     (function () {
 
         // Set date picker
-        var _from = $('#startVac').datepicker({
-            changeMonth: true,
-            numberOfMonth: 1,
-        }).on('change', function () {
+        var _from = $('#startVac').datepicker().on('change', function () {
             _to.datepicker('option', 'minDate', getDate(this));
         });
 
-        var _to = $('#endVac').datepicker({
-            changeMonth: true,
-            numberOfMonth: 1,
-        }).on('change', function () {
+        var _to = $('#endVac').datepicker().on('change', function () {
             _from.datepicker('option', 'maxDate', getDate(this));
         });
 
