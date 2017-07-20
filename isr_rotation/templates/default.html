@@ -53,7 +53,8 @@
                                                class="btn-update-user right">
                                                 <i class="material-icons">mode_edit</i>
                                             </a>
-                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
+                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
+                                               class="btn-vacation right">
                                                 <i class="material-icons">date_range</i>
                                             </a>
                                         </li>
@@ -83,7 +84,8 @@
                                                class="btn-update-user right">
                                                 <i class="material-icons">mode_edit</i>
                                             </a>
-                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}" class="right">
+                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
+                                               class="btn-vacation right">
                                                 <i class="material-icons">date_range</i>
                                             </a>
                                         </li>
@@ -241,6 +243,11 @@
             $('#updateUserModel').modal();
             $('#deleteUserModal').modal();
 
+            $('.btn-delete-user, .btn-update-user, .btn-vacation').hover(function (){
+                $(this).addClass('orange-text');
+            }, function (){
+                $(this).removeClass('orange-text');
+            })
         });
     </script>
 {% endblock %}
