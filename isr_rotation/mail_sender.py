@@ -8,20 +8,29 @@ from isr_rotation.logger import Logger
 from isr_rotation import app
 
 
-def _send_email(preview_only=False, ignore_weekend=False):
+def __can_send_email():
+    """
+    Check if email can be sent or not
+    :return:
+    """
+
+    if datetime.today().weekday() > 4:  # 0=Monday, 6=Sunday
+        Logger.info('Cannot send email - Today is a weekend.')
+        return False
+
+    if db.is_holiday():
+        Logger.info('Cannot send email - Today is holiday.')
+        return False
+
+    return True
+
+
+def __send_email(preview_only=False):
     """
     Send email
     :param preview_only: True to preview
     :return: True for success
     """
-
-    if not ignore_weekend and datetime.today().weekday() > 4:  # 0=Monday, 6=Sunday
-        Logger.info('Not sending an email - Today is a weekend.')
-        return False
-
-    if db.is_holiday():
-        Logger.info('Not sending an email - Today is holiday.')
-        return False
 
     config = db.get_config()
 
@@ -62,15 +71,24 @@ def _send_email(preview_only=False, ignore_weekend=False):
     return res.ok
 
 
+def send(preview_only=False):
+    Logger.debug('Sending email')
+
+    if __can_send_email():
+        db.move_next()
+        return __send_email(preview_only)
+
+
 def resend(preview_only=False):
     Logger.debug('Resending email')
-    return _send_email(preview_only)
-    # return _send_email(True, True)
+
+    if __can_send_email():
+        return __send_email(preview_only)
 
 
 def move_next(preview_only=False):
     db.move_next()
-    result = _send_email(preview_only)
-    # result = _send_email(True, True)
+    result = __send_email(preview_only)
+
     return result
 
