@@ -26,6 +26,7 @@
 </ul>
 <nav class="blue">
     <div class="nav-wrapper container">
+        <a href="#" data-activates="mobile-nav" class="button-collapse"><i class="material-icons">menu</i></a>
         <a href="/" class="brand-logo">ISR Rotation</a>
         <ul class="right hide-on-med-and-down ">
             <li><a href="/">Main Page</a></li>
@@ -33,6 +34,12 @@
             <li><a class="dropdown-button" href="#!" data-activates="ddConfig">Configuration
                 <i class="material-icons right">arrow_drop_down</i></a>
             </li>
+        </ul>
+        <ul class="side-nav" id="mobile-nav">
+            <li><a href="/">Main Page</a></li>
+            <li><a href="/holiday">Holidays</a></li>
+            <li><a href="/email-config">Email</a></li>
+            <li><a href="/log">System Log</a></li>
         </ul>
     </div>
 </nav>
@@ -55,6 +62,12 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/js/materialize.min.js"></script>
 
 <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('.button-collapse').sideNav();
+    });
+</script>
 
 {% block scripts %}{% endblock %}
 

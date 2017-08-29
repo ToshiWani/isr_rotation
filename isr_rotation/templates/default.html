@@ -1,103 +1,108 @@
 {% extends "layout.html" %}
 {% block body %}
 
-    <div class="row">
-        <div class="col s12">
-            <div class="card">
-                <div class="card-content">
-                    <div class="row">
-                        <div class="col s6">
-                            <a href="#resendModal" class="waves-effect btn-flat">
-                                <i class="material-icons left">send</i>
-                                Resend
-                            </a>
-                            <a href="#moveNextModal" class="waves-effect btn-flat">
-                                <i class="material-icons left">skip_next</i>
-                                Move Next User
-                            </a>
-                        </div>
-                        <div class="col s6">
-                            <a href="#" class="waves-effect waves-light btn orange right" id="BtnSave">
-                                <i class="material-icons left">save</i>
-                                Save
-                            </a>
-                            <span class="pull-right">&nbsp;</span>
-                            <a href="#" class="waves-effect btn-flat right" onclick="location.reload()">
-                                <i class="material-icons left">undo</i>
-                                Reset
-                            </a>
-                        </div>
-                    </div>
-                    <hr/>
-                    <div class="row">
-                        <div class="col s6">
-                            <ul id="offDutyTable" class="collection with-header connectedSortable">
-                                <li class="collection-header grey">
-                                    <h4>
-                                        Off-Duty Users
-                                        <a href="#addUserModal" class="waves-effect waves-light btn blue right">
-                                            <i class="material-icons">person_add</i>
-                                        </a>
-                                    </h4>
+
+    <div class="card">
+        <div class="card-content">
+            <div class="row">
+                <div class="col s12 m6 l3">
+                    <a href="#resendModal" class="waves-effect btn-flat ">
+                        <i class="material-icons left">send</i>
+                        Resend
+                    </a>
+                </div>
+
+                <div class="col s12 m6 l3">
+                    <a href="#moveNextModal" class="waves-effect btn-flat ">
+                        <i class="material-icons left">skip_next</i>
+                        Move Next User
+                    </a>
+                </div>
+
+                <div class="col s12 m6 l3">
+                    <a href="#" class="waves-effect btn-flat " onclick="location.reload()">
+                        <i class="material-icons left">undo</i>
+                        Reset
+                    </a>
+                </div>
+
+                <div class="col s12 m6 l3">
+                    <a href="#" class="waves-effect waves-light btn orange " id="BtnSave">
+                        <i class="material-icons left">save</i>
+                        Save
+                    </a>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col s12 m12 l6">
+                    <ul id="offDutyTable" class="collection with-header connectedSortable">
+                        <li class="collection-header grey">
+                            <h5>
+                                Off-Duty Users
+                                <a href="#addUserModal" class="waves-effect waves-light btn blue right"
+                                   style="padding:0 12px;">
+                                    <i class="material-icons">person_add</i>
+                                </a>
+                            </h5>
+                        </li>
+                        {% for u in users %}
+                            {% if u.on_duty == False %}
+                                <li class="collection-item user-list hoverable" data-userid="{{ u.id }}">
+                                    <i class="material-icons left">drag_handle</i>
+                                    {{ u.name }}
+                                    <a href="#deleteUserModal" data-userid="{{ u.id }}"
+                                       class="btn-delete-user right">
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                    <a href="#updateUserModel" data-userid="{{ u.id }}"
+                                       class="btn-update-user right">
+                                        <i class="material-icons">mode_edit</i>
+                                    </a>
+                                    <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
+                                       class="btn-vacation right">
+                                        <i class="material-icons">date_range</i>
+                                    </a>
                                 </li>
-                                {% for u in users %}
-                                    {% if u.on_duty == False %}
-                                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}">
-                                            <i class="material-icons left">drag_handle</i>
-                                            {{ u.name }}
-                                            <a href="#deleteUserModal" data-userid="{{ u.id }}"
-                                               class="btn-delete-user right">
-                                                <i class="material-icons">delete</i>
-                                            </a>
-                                            <a href="#updateUserModel" data-userid="{{ u.id }}"
-                                               class="btn-update-user right">
-                                                <i class="material-icons">mode_edit</i>
-                                            </a>
-                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
-                                               class="btn-vacation right">
-                                                <i class="material-icons">date_range</i>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        <div class="col s6">
-                            <ul id="onDutyTable" class="collection with-header connectedSortable"
-                                style="min-height:60px;">
-                                <li class="collection-header blue">
-                                    <h4>
-                                        On-Duty Users
-                                    </h4>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col s12 m12 l6">
+                    <ul id="onDutyTable" class="collection with-header connectedSortable"
+                        style="min-height:60px;">
+                        <li class="collection-header blue">
+                            <h5>
+                                On-Duty Users
+                            </h5>
+                        </li>
+                        {% for u in users %}
+                            {% if u.on_duty == True %}
+                                <li class="collection-item user-list hoverable" data-userid="{{ u.id }}"
+                                    data-seq="{{ u.seq }}">
+                                    <i class="material-icons left">drag_handle</i>
+                                    {{ u.name }}
+                                    <a href="#deleteUserModal" data-userid="{{ u.id }}"
+                                       class="btn-delete-user right">
+                                        <i class="material-icons">delete</i>
+                                    </a>
+                                    <a href="#updateUserModel" data-userid="{{ u.id }}"
+                                       class="btn-update-user right">
+                                        <i class="material-icons">mode_edit</i>
+                                    </a>
+                                    <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
+                                       class="btn-vacation right">
+                                        <i class="material-icons">date_range</i>
+                                    </a>
                                 </li>
-                                {% for u in users %}
-                                    {% if u.on_duty == True %}
-                                        <li class="collection-item user-list hoverable" data-userid="{{ u.id }}"
-                                            data-seq="{{ u.seq }}">
-                                            <i class="material-icons left">drag_handle</i>
-                                            {{ u.name }}
-                                            <a href="#deleteUserModal" data-userid="{{ u.id }}"
-                                               class="btn-delete-user right">
-                                                <i class="material-icons">delete</i>
-                                            </a>
-                                            <a href="#updateUserModel" data-userid="{{ u.id }}"
-                                               class="btn-update-user right">
-                                                <i class="material-icons">mode_edit</i>
-                                            </a>
-                                            <a href="/vacation/{{ u.id }}" data-userid="{{ u.id }}"
-                                               class="btn-vacation right">
-                                                <i class="material-icons">date_range</i>
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    </div>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 
@@ -243,9 +248,9 @@
             $('#updateUserModel').modal();
             $('#deleteUserModal').modal();
 
-            $('.btn-delete-user, .btn-update-user, .btn-vacation').hover(function (){
+            $('.btn-delete-user, .btn-update-user, .btn-vacation').hover(function () {
                 $(this).addClass('orange-text');
-            }, function (){
+            }, function () {
                 $(this).removeClass('orange-text');
             })
         });
