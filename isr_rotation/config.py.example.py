@@ -5,3 +5,5 @@ LOG_LEVEL = 'INFO'
 # Public key and private key of mailjet.com service
 EMAIL_API_KEY = ''
 EMAIL_API_SECRET = ''
+# Mongo DB - Example:  mongodb://localhost:27017/myDatabase
+MONGO_URI = ''
