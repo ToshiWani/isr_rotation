@@ -6,5 +6,27 @@
 </head>
 <body>
 <h1>INDEX!!</h1>
+
+<table border="1">
+    <tbody>
+        {% for u in users  %}
+            <tr>
+                <td>{{ u.display_name }}</td>
+                <td>{{u.email}}</td>
+                <td>{{ u._id }}</td>
+                <td><a href="{{ url_for('main.update_user', email=[u.email]) }}">Edit</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div>
+    <a href="{{ url_for('main.add_user') }}">Add user</a>
+</div>
+<div>
+    <a href="{{ url_for('main.delete_user') }}">Delete user</a>
+</div>
+
+
 </body>
 </html>

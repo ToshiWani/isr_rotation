@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update User</title>
+</head>
+<body>
+<form method="post">
+    <table>
+        <tr><td>Email</td><td>Display Name</td></tr>
+        <tr><td>{{ user.email }}</td><td><input type="text" name="display_name" value="{{ user.display_name }}" /></td></tr>
+    </table>
+    <button type="submit">Update</button>
+</form>
+</body>
+</html>
