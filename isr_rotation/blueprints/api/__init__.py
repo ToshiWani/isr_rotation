@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from isr_rotation import database as db
+import isr_rotation.mailer as mailer
 
 bp = Blueprint('api', __name__)
 
@@ -7,7 +7,5 @@ bp = Blueprint('api', __name__)
 @bp.route('/get_user')
 def get_user():
     return 'ok'
-
-
 
 

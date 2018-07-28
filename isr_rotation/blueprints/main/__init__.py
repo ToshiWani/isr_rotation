@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect, request, url_for
+from flask import Blueprint, render_template, redirect, request, url_for, current_app
 from isr_rotation import database as db
+import isr_rotation.mailer as mailer
 
 bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -42,20 +43,15 @@ def delete_user():
         return render_template('/main/delete_user.html', users=users)
 
 
-@bp.route('/<email>')
-def user(email):
-    user = db.get_user(email)
-    return None if user is None else user[0]['display_name']
-
-
-@bp.route('/upsert/<email>/<display_name>')
-def upsert(email, display_name):
-    user = db.upsert_user(email, display_name)
-    return str(user.upserted_id)
-
-
-@bp.route('/delete/<email>')
-def delete(email):
-    result = db.delete_user(email)
-    return result.delete_count
+@bp.route('/email', methods=['GET', 'POST'])
+def send_email():
+    if request.method == 'POST':
+        mailer.send(
+            [request.form.get('recipient')],
+            current_app.config.get('MAIL_DEFAULT_SUBJECT', 'ISR Rotation'),
+            request.form.get('body')
+        )
+        return redirect('/')
+    else:
+        return render_template('/main/email.html')
 
