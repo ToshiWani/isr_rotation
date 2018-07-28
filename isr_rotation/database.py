@@ -1,4 +1,7 @@
-from isr_rotation import mongo
+from flask_pymongo import PyMongo
+
+
+mongo = PyMongo()
 
 
 def get_all_user():
