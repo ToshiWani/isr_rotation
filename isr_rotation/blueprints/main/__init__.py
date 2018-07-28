@@ -58,8 +58,16 @@ def send_email():
         return render_template('/main/email.html')
 
 
-@bp.route('/auth/<email>/<password>')
-def auth(email, password):
-    result = authentication.authenticate(email, password)
-    user = authentication.get_ldap_user(email)
-    return result.status.name + user.get('cn')
+@bp.route('/auth', methods=['GET', 'POST'])
+def auth():
+    user = None
+    result = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        result = authentication.authenticate(email, password)
+        user = authentication.get_ldap_user(email)
+        photo = user.get('thumbnailPhoto')
+
+    return render_template('/main/authentication.html', user=user, result=result)
+
