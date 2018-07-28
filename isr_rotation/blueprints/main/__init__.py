@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, request, url_for, current_app
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
+import isr_rotation.authentication as authentication
+
 
 bp = Blueprint('main', __name__, template_folder='templates')
 
@@ -55,3 +57,9 @@ def send_email():
     else:
         return render_template('/main/email.html')
 
+
+@bp.route('/auth/<email>/<password>')
+def auth(email, password):
+    result = authentication.authenticate(email, password)
+    user = authentication.get_ldap_user(email)
+    return result.status.name + user.get('cn')
