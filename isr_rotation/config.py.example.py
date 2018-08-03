@@ -1,3 +1,5 @@
+SECRET_KEY = ''
+DEBUG = True
 #
 # Log level.  Enter DEBUG or INFO
 #
@@ -36,4 +38,6 @@ LDAP_USER_LOGIN_ATTR = 'mail'
 LDAP_BIND_USER_DN = 'domain\\username'
 # The Password to bind to LDAP with
 LDAP_BIND_USER_PASSWORD = 'yourpassword'
-
+# Instead of searching for a DN of a user you can instead bind directly to the directory.
+# This is useful if you need to authenticate users with windows domain notation
+LDAP_BIND_DIRECT_CREDENTIALS = True

@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, redirect, request, url_for, curren
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
+from flask_login import current_user, login_user
+from flask_ldap3_login.forms import LDAPLoginForm
 
 
 bp = Blueprint('main', __name__, template_folder='templates')
@@ -10,7 +12,10 @@ bp = Blueprint('main', __name__, template_folder='templates')
 @bp.route('/', methods=['GET'])
 def home():
     users = db.get_all_user()
-    return render_template('/main/index.html', users=users)
+    if current_user.is_authenticated:
+        user_data = authentication.get_ldap_user(current_user.username)
+
+    return render_template('/main/index.html', users=users, current_user=current_user, user_data=user_data)
 
 
 @bp.route('/add_user', methods=['GET', 'POST'])
@@ -70,4 +75,17 @@ def auth():
         photo = user.get('thumbnailPhoto')
 
     return render_template('/main/authentication.html', user=user, result=result)
+
+
+@bp.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LDAPLoginForm()
+    result = form.validate_on_submit()
+    if result:
+        # Successfully logged in, We can now access the saved user object
+        # via form.user.
+        login_user(form.user)  # Tell flask-login to log them in.
+        return redirect('/')  # Send them home
+
+    return render_template('/main/login.html', form=form)
 

@@ -7,6 +7,11 @@
 <body>
 <h1>INDEX!!</h1>
 
+{% if current_user.is_authenticated %}
+    <h2>Yo {{ user_data.get('cn') }}!</h2>
+    <h3>{{ user_data.get('mail') }}</h3>
+{% endif %}
+
 <table border="1">
     <tbody>
         {% for u in users  %}
@@ -19,6 +24,8 @@
         {% endfor %}
     </tbody>
 </table>
+
+
 
 <div>
     <a href="{{ url_for('main.add_user') }}">Add user</a>
