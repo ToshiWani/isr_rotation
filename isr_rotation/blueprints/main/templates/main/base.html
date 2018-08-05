@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{% block title %}{% endblock %} | ISR Rotation</title>
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    {% endblock %}
+</head>
+<body>
+
+<div id="content">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<div id="footer">
+    {% block footer %}{% endblock %}
+</div>
+
+{% block scripts %}
+    <!-- Compiled and minified JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <script>
+        //
+        // Initialize all of the Materialize Components
+        //
+        M.AutoInit();
+
+        //
+        // Display flash messages
+        //
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                (function(){
+                    let msg = [];
+                    {{ 'msg = ' + messages|tojson|safe + ';' }}
+                    if (msg.length > 0) {
+                        msg.forEach(function(m){
+                            M.toast({html: m, classes: 'pink'});
+                        });
+                    }
+                })();
+            {% endif %}
+        {% endwith %}
+    </script>
+{% endblock %}
+</body>
+</html>

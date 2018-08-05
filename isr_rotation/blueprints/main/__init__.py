@@ -81,17 +81,20 @@ def auth():
 
 @bp.route('/login', methods=['GET'])
 def login():
-    return render_template('/main/login.html', form=LDAPLoginForm())
+    form = LDAPLoginForm()
+    flash('test test test test!!!!')
+    return render_template('/main/login.html', form=form)
 
 
 @bp.route('/login', methods=['POST'])
 def login_post():
     form = LDAPLoginForm()
+
     if form.validate_on_submit():
         if login_user(form.user):
             return redirect('/')  # Send them home
         else:
-            flash('User not authorized')
+            form.errors['password'] = ['User not authorized']
 
     return render_template('/main/login.html', form=form)
 
