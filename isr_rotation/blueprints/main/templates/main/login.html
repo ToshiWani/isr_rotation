@@ -12,11 +12,13 @@
                     <form method="POST">
                         <div class="row">
                             <div class="input-field col s12">
+                                <i class="material-icons prefix">alternate_email</i>
                                 {{ form.username() }}<label>Company Email</label>
                             </div>
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
                                 {{ form.password() }}{{ form.password.label() }}
                             </div>
                         </div>
@@ -27,7 +29,7 @@
                         </div>
                         <div class="row">
                             <div class="input-field col s12">
-                                <button class="btn waves-effect waves-light right" id="submit" name="submit" type="submit">
+                                <button class="btn waves-effect waves-light right light-blue" id="submit" name="submit" type="submit">
                                     Submit
                                 </button>
                             </div>

@@ -82,7 +82,6 @@ def auth():
 @bp.route('/login', methods=['GET'])
 def login():
     form = LDAPLoginForm()
-    flash('test test test test!!!!')
     return render_template('/main/login.html', form=form)
 
 
