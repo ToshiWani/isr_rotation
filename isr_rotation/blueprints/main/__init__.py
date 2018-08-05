@@ -1,8 +1,8 @@
-from flask import Blueprint, render_template, redirect, request, url_for, current_app
+from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required
 from flask_ldap3_login.forms import LDAPLoginForm
 
 
@@ -12,6 +12,7 @@ bp = Blueprint('main', __name__, template_folder='templates')
 @bp.route('/', methods=['GET'])
 def home():
     users = db.get_all_user()
+    user_data = None
     if current_user.is_authenticated:
         user_data = authentication.get_ldap_user(current_user.username)
 
@@ -19,6 +20,7 @@ def home():
 
 
 @bp.route('/add_user', methods=['GET', 'POST'])
+@login_required
 def add_user():
     if request.method == 'GET':
         return render_template('/main/add_user.html')
@@ -77,15 +79,19 @@ def auth():
     return render_template('/main/authentication.html', user=user, result=result)
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET'])
 def login():
+    return render_template('/main/login.html', form=LDAPLoginForm())
+
+
+@bp.route('/login', methods=['POST'])
+def login_post():
     form = LDAPLoginForm()
-    result = form.validate_on_submit()
-    if result:
-        # Successfully logged in, We can now access the saved user object
-        # via form.user.
-        login_user(form.user)  # Tell flask-login to log them in.
-        return redirect('/')  # Send them home
+    if form.validate_on_submit():
+        if login_user(form.user):
+            return redirect('/')  # Send them home
+        else:
+            flash('User not authorized')
 
     return render_template('/main/login.html', form=form)
 

@@ -18,6 +18,7 @@ mail.init_app(app)
 # Login
 ldap3.init_app(app)
 login_manager.init_app(app)
+login_manager.login_view = "main.login"
 
 # Blueprints
 app.register_blueprint(main_bp)

@@ -1,7 +1,7 @@
 from flask_ldap3_login import LDAP3LoginManager
 from flask_login import LoginManager
 from isr_rotation.user import User
-
+import isr_rotation.database as db
 
 ldap3 = LDAP3LoginManager()
 login_manager = LoginManager()
@@ -19,14 +19,17 @@ def get_ldap_user(username):
 
 
 @login_manager.user_loader
-def load_user(id):
-    if id in users:
-        return users[id]
-    return None
+def load_user(username):
+    return users[username] if username in users else None
 
 
 @ldap3.save_user
 def save_user(dn, username, data, memberships):
-    user = User(dn, username, data)
-    users[dn] = user
-    return user
+    registered_user = db.get_user(username)
+
+    if registered_user is None:
+        return User(None, is_active=False, is_anonymous=True, is_authenticated=False)
+    else:
+        users[username] = User(username, is_active=True, is_anonymous=False, is_authenticated=True)
+        return users[username]
+

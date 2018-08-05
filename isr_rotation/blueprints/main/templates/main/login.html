@@ -11,6 +11,7 @@
 <form method="POST">
     <label>Username{{ form.username() }}</label>
     <label>Password{{ form.password() }}</label>
+    <label>Remember Me {{ form.remember_me() }}</label>
     {{ form.submit() }}
     {{ form.hidden_tag() }}
 </form>
