@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, request, url_for, curren
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
-from flask_login import current_user, login_user, login_required
+from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login.forms import LDAPLoginForm
 
 
@@ -94,4 +94,12 @@ def login_post():
             flash('User not authorized')
 
     return render_template('/main/login.html', form=form)
+
+
+@bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
+
 
