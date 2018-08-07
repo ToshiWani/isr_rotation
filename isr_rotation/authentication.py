@@ -28,8 +28,16 @@ def save_user(dn, username, data, memberships):
     registered_user = db.get_user(username)
 
     if registered_user is None:
-        return User(None, is_active=False, is_anonymous=True, is_authenticated=False)
+        return User(None,
+                    is_active=False,
+                    is_anonymous=True,
+                    is_authenticated=False,
+                    display_name=None)
     else:
-        users[username] = User(username, is_active=True, is_anonymous=False, is_authenticated=True)
+        users[username] = User(username,
+                               is_active=True,
+                               is_anonymous=False,
+                               is_authenticated=True,
+                               display_name=registered_user.get('display_name'))
         return users[username]
 

@@ -2,8 +2,9 @@ from flask_login import UserMixin
 
 
 class User(UserMixin):
-    def __init__(self, username, is_active, is_anonymous, is_authenticated):
+    def __init__(self, username, is_active, is_anonymous, is_authenticated, display_name):
         self.username = username
+        self.display_name = display_name
         self.param = dict(is_active=is_active, is_anonymous=is_anonymous, is_authenticated=is_authenticated)
 
     def __repr__(self):

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash
+from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash, g
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
@@ -9,7 +9,14 @@ from flask_ldap3_login.forms import LDAPLoginForm
 bp = Blueprint('main', __name__, template_folder='templates')
 
 
+@bp.before_request
+def before_request():
+    g.user = current_user
+    pass
+
+
 @bp.route('/', methods=['GET'])
+@login_required
 def home():
     users = db.get_all_user()
     user_data = None

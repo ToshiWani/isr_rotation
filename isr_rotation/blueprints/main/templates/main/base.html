@@ -13,11 +13,12 @@
 </head>
 <body>
 
-<nav class="light-blue">
+<nav class="light-blue" style="margin-bottom: 3rem;">
     <div class="container">
         <div class="nav-wrapper">
-            <a href="#" class="brand-logo">ISR Rotation</a>
+            <a href="/" class="brand-logo">ISR Rotation</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="#">{{ g.user.display_name }}</a></li>
                 <li><a href="#"><i class="material-icons">search</i></a></li>
                 <li><a href="#"><i class="material-icons">view_module</i></a></li>
                 <li><a href="#"><i class="material-icons">refresh</i></a></li>
@@ -26,6 +27,8 @@
         </div>
     </div>
 </nav>
+
+
 
 <div id="content">
     <div class="container">
