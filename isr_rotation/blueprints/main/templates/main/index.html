@@ -58,13 +58,16 @@
 
 
     {% if current_user.is_authenticated %}
-        <h2>Yo {{ user_data.get('cn') }}!</h2>
-        <h3>{{ user_data.get('mail') }}</h3>
+        <h2>Yo {{ ldap_user.get('cn') }}!</h2>
+        <h3>{{ ldap_user.get('mail') }}</h3>
     {% endif %}
 
-
-
-
-
+    <table>
+    <tbody>
+    {% for u in ldap_user %}
+        <tr><th class="collection-item">{{ u }}</th><td>{{ ldap_user[u] }}</td></tr>
+    {% endfor %}
+    </tbody>
+    </table>
 
 {% endblock %}
