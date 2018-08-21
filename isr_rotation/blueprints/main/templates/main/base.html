@@ -9,6 +9,8 @@
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- dragula -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css"/>
     {% endblock %}
 </head>
 <body>
@@ -29,7 +31,6 @@
 </nav>
 
 
-
 <div id="content">
     <div class="container">
         {% block content %}{% endblock %}
@@ -43,28 +44,67 @@
 {% block scripts %}
     <!-- Compiled and minified JavaScript -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <!-- dragula -->
+    <script src='//cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
     <script>
-        //
-        // Initialize all of the Materialize Components
-        //
-        M.AutoInit();
+        (function () {
+            //
+            // Initialize all of the Materialize Components
+            //
+            M.AutoInit();
 
-        //
-        // Display flash messages
-        //
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                (function () {
-                    let msg = [];
-                    {{ 'msg = ' + messages|tojson|safe + ';' }}
-                    if (msg.length > 0) {
-                        msg.forEach(function (m) {
-                            M.toast({html: m, classes: 'pink'});
-                        });
+            //
+            // Display flash messages
+            //
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    (function () {
+                        let msg = [];
+                        {{ 'msg = ' + messages|tojson|safe + ';' }}
+                        if (msg.length > 0) {
+                            msg.forEach(function (m) {
+                                M.toast({html: m, classes: 'pink'});
+                            });
+                        }
+                    })();
+                {% endif %}
+            {% endwith %}
+
+            //
+            // Dragula
+            //
+            var drake = dragula([
+                document.getElementById('left'),
+                document.getElementById('right')
+            ]);
+
+            //
+            // Save User Rotation
+            //
+            document.getElementById('btnSave').addEventListener('click', function(){
+                var result = {
+                    offDuty: getUserOrder('left'),
+                    onDuty: getUserOrder('right')
+                };
+
+                console.log(result);
+
+                // TODO: Implement update rotation
+            });
+
+            function getUserOrder(elemId) {
+                var users = document.getElementById(elemId).children;
+                var result = [];
+                for (var i = 0; i < users.length; i++) {
+                    var email = users[i].getAttribute('data-email');
+                    if(email){
+                        result[i] = email;
                     }
-                })();
-            {% endif %}
-        {% endwith %}
+                }
+                return result;
+            }
+
+        })();
     </script>
 {% endblock %}
 </body>
