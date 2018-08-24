@@ -26,3 +26,6 @@ def delete_users(emails):
     return mongo.db.users.delete_many(query)
 
 
+def update_rotation(email, is_duty, seq):
+    return mongo.db.users.update_one({'email': email}, {'$set': {'is_duty': is_duty, 'seq': seq}})
+

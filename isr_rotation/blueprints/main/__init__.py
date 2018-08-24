@@ -19,11 +19,12 @@ def before_request():
 @login_required
 def home():
     users = db.get_all_user()
-    if current_user.is_authenticated:
-        ldap_user = authentication.get_ldap_user(current_user.username)
-        return render_template('/main/index.html', users=users, current_user=current_user, ldap_user=ldap_user)
-    else:
-        return redirect('/')
+    return render_template(
+        '/main/index.html',
+        on_duty_users=[u for u in users if u['is_duty']],
+        off_duty_users=[u for u in users if not u['is_duty']],
+        current_user=current_user,
+    )
 
 
 @bp.route('/add_user', methods=['GET', 'POST'])

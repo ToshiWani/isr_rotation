@@ -16,6 +16,7 @@
             <a class="waves-effect waves-teal btn-flat" href="{{ url_for('main.login') }}">Login</a>
             <a class="waves-effect waves-teal btn-flat" href="{{ url_for('main.logout') }}">Logout</a>
             <a class="waves-effect waves-teal btn-flat" href="#" id="btnSave">Save</a>
+            <a class="waves-effect waves-teal btn-flat" href="#" id="reset">Reset</a>
         </div>
     </div>
 
@@ -26,8 +27,8 @@
                     <div class="card-title">Off Duty</div>
                 </div>
                 <div id="left" class="collection">
-                    {% for u in users %}
-                        <div class="collection-item" data-email="{{ u.email }}">
+                    {% for u in off_duty_users %}
+                        <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}">
                             <i class="material-icons">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
@@ -49,11 +50,11 @@
         <div class="col s12 m6">
             <div class="card">
                 <div class="card-content">
-                    <div class="card-title">Off Duty</div>
+                    <div class="card-title">On Duty</div>
                 </div>
                 <div id="right" class="collection">
-                    {% for u in users %}
-                        <div class="collection-item" data-email="{{ u.email }}">
+                    {% for u in on_duty_users %}
+                        <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}">
                             <i class="material-icons">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
@@ -73,21 +74,5 @@
             </div>
         </div>
     </div>
-
-    {% if current_user.is_authenticated %}
-        <h2>Yo {{ ldap_user.get('cn') }}!</h2>
-        <h3>{{ ldap_user.get('mail') }}</h3>
-    {% endif %}
-
-    <table>
-        <tbody>
-        {% for u in ldap_user %}
-            <tr>
-                <th class="collection-item">{{ u }}</th>
-                <td>{{ ldap_user[u] }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
 {% endblock %}
