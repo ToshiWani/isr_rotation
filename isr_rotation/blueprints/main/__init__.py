@@ -93,7 +93,6 @@ def login():
     if bypass_login:
         login_user(authentication.get_debug_user())
         return redirect('/')
-        # return render_template('/main/login.html', form=LDAPLoginForm())
     else:
         form = LDAPLoginForm()
         return render_template('/main/login.html', form=form)
