@@ -23,7 +23,8 @@ def get_debug_user(username):
                       is_active=True,
                       is_anonymous=False,
                       is_authenticated=True,
-                      display_name='*** DEBUG USER ***')
+                      display_name='*** DEBUG (' + username + ') ***'
+                      )
     users[username] = debug_user
     return debug_user
 

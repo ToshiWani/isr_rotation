@@ -4,6 +4,7 @@ import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login.forms import LDAPLoginForm
+from isr_rotation.caching import get_cache, set_cache
 
 
 bp = Blueprint('main', __name__, template_folder='templates')
@@ -44,7 +45,12 @@ def update_user(email):
         db.upsert_user(email, request.form.get('display_name'))
         return redirect('/')
     else:
-        ldap_user = authentication.get_ldap_user(email)
+        cache_key = 'ldap_user_' + email
+        ldap_user = get_cache(cache_key)
+        if ldap_user is None:
+            ldap_user = authentication.get_ldap_user(email)
+            set_cache(cache_key, ldap_user)
+
         return render_template('/main/update_user.html', user=user, ldap_user=ldap_user)
 
 
