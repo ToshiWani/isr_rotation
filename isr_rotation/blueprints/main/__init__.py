@@ -37,16 +37,15 @@ def add_user():
         return redirect('/')
 
 
-@bp.route('/update_user', methods=['GET', 'POST'])
-def update_user():
-    email = request.args.get('email')
+@bp.route('/update_user/<email>', methods=['GET', 'POST'])
+def update_user(email):
     user = db.get_user(email)
-
     if request.method == 'POST':
         db.upsert_user(email, request.form.get('display_name'))
         return redirect('/')
     else:
-        return render_template('/main/update_user.html', user=user)
+        ldap_user = authentication.get_ldap_user(email)
+        return render_template('/main/update_user.html', user=user, ldap_user=ldap_user)
 
 
 @bp.route('/delete_user', methods=['GET', 'POST'])
@@ -91,7 +90,8 @@ def auth():
 def login():
     bypass_login = current_app.config.get('DEBUG_BYPASS_LOGIN', False)
     if bypass_login:
-        login_user(authentication.get_debug_user())
+        debug_user = current_app.config.get('DEBUG_BYPASS_USERNAME', 'debug_user')
+        login_user(authentication.get_debug_user(debug_user))
         return redirect('/')
     else:
         form = LDAPLoginForm()

@@ -18,13 +18,13 @@ def get_ldap_user(username):
     return user
 
 
-def get_debug_user():
-    debug_user = User(username='debug_user',
+def get_debug_user(username):
+    debug_user = User(username=username,
                       is_active=True,
                       is_anonymous=False,
                       is_authenticated=True,
                       display_name='*** DEBUG USER ***')
-    users['debug_user'] = debug_user
+    users[username] = debug_user
     return debug_user
 
 

@@ -1,6 +1,7 @@
 SECRET_KEY = ''
 DEBUG = True
 DEBUG_BYPASS_LOGIN = False
+DEBUG_BYPASS_USERNAME = ''
 #
 # Log level.  Enter DEBUG or INFO
 #
