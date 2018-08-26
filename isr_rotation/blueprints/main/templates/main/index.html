@@ -74,3 +74,57 @@
     </div>
 
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <!-- dragula -->
+    <script src='//cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js'></script>
+    <script>
+        (function () {
+            //
+            // Dragula
+            //
+            var drake = dragula([
+                document.getElementById('left'),
+                document.getElementById('right')
+            ]);
+
+            document.getElementById('reset').addEventListener('click', function () {
+                location.reload();
+            });
+
+            //
+            // Save User Rotation
+            //
+            document.getElementById('btnSave').addEventListener('click', function () {
+                var result = {
+                    off_duty: getUserOrder('left'),
+                    on_duty: getUserOrder('right')
+                };
+
+                console.log(result);
+
+                axios.post('/api/get_user', result)
+                    .then(function (response) {
+                        M.toast({html: 'Saved', classes: 'light-blue'});
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        M.toast({html: 'Error while saving', classes: 'pink'});
+                    });
+            });
+
+            function getUserOrder(elemId) {
+                var users = document.getElementById(elemId).children;
+                var result = [];
+                for (var i = 0; i < users.length; i++) {
+                    var email = users[i].getAttribute('data-email');
+                    if (email) {
+                        result[i] = email;
+                    }
+                }
+                return result;
+            }
+        })();
+    </script>
+{% endblock %}
