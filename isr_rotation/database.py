@@ -1,6 +1,5 @@
 from flask_pymongo import PyMongo
 
-
 mongo = PyMongo()
 
 
@@ -28,4 +27,10 @@ def delete_users(emails):
 
 def update_rotation(email, is_duty, seq):
     return mongo.db.users.update_one({'email': email}, {'$set': {'is_duty': is_duty, 'seq': seq}})
+
+
+def move_next():
+    return mongo.db.users.find()
+
+
 

@@ -13,8 +13,10 @@
             <a class="waves-effect waves-teal btn-flat" href="{{ url_for('main.delete_user') }}">Delete user</a>
             <a class="waves-effect waves-teal btn-flat" href="{{ url_for('main.send_email') }}">Email</a>
             <a class="waves-effect waves-teal btn-flat" href="{{ url_for('main.auth') }}">Authentication Test</a>
+            <a class="waves-effect waves-teal btn-flat" href="#" id="btnMoveNext">Move Next</a>
+            <a class="waves-effect waves-teal btn-flat" href="#" id="btnResendEmail">Resend Email</a>
             <a class="waves-effect waves-teal btn-flat" href="#" id="btnSave">Save</a>
-            <a class="waves-effect waves-teal btn-flat" href="#" id="reset">Reset</a>
+            <a class="waves-effect waves-teal btn-flat" href="#" id="btnReset">Reset</a>
         </div>
     </div>
 
@@ -89,7 +91,7 @@
                 document.getElementById('right')
             ]);
 
-            document.getElementById('reset').addEventListener('click', function () {
+            document.getElementById('btnReset').addEventListener('click', function () {
                 location.reload();
             });
 
@@ -102,10 +104,9 @@
                     on_duty: getUserOrder('right')
                 };
 
-                console.log(result);
-
                 axios.post('/api/get_user', result)
                     .then(function (response) {
+                        console.log(response);
                         M.toast({html: 'Saved', classes: 'light-blue'});
                     })
                     .catch(function (error) {
@@ -125,6 +126,17 @@
                 }
                 return result;
             }
+
+            //
+            // Move Next
+            //
+            document.getElementById('btnMoveNext').addEventListener('click', function () {
+                console.log('btnMoveNext');
+                axios.post('/api/move_next', {})
+                    .then(function (response) {
+                        console.log(response.data);
+                    });
+            });
         })();
     </script>
 {% endblock %}
