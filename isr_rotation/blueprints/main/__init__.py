@@ -89,8 +89,14 @@ def auth():
 
 @bp.route('/login', methods=['GET'])
 def login():
-    form = LDAPLoginForm()
-    return render_template('/main/login.html', form=form)
+    bypass_login = current_app.config.get('DEBUG_BYPASS_LOGIN', False)
+    if bypass_login:
+        login_user(authentication.get_debug_user())
+        return redirect('/')
+        # return render_template('/main/login.html', form=LDAPLoginForm())
+    else:
+        form = LDAPLoginForm()
+        return render_template('/main/login.html', form=form)
 
 
 @bp.route('/login', methods=['POST'])

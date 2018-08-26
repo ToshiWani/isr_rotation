@@ -18,6 +18,16 @@ def get_ldap_user(username):
     return user
 
 
+def get_debug_user():
+    debug_user = User(username='debug_user',
+                      is_active=True,
+                      is_anonymous=False,
+                      is_authenticated=True,
+                      display_name='*** DEBUG USER ***')
+    users['debug_user'] = debug_user
+    return debug_user
+
+
 @login_manager.user_loader
 def load_user(username):
     return users[username] if username in users else None
