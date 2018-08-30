@@ -20,10 +20,12 @@ def before_request():
 @login_required
 def home():
     users = db.get_all_user()
+    on_duty_users = sorted([u for u in users if u.get('is_duty')], key=lambda u:u.get('seq'))
+    off_duty_users = [u for u in users if not u.get('is_duty')]
     return render_template(
         '/main/index.html',
-        on_duty_users=[u for u in users if u['is_duty']],
-        off_duty_users=[u for u in users if not u['is_duty']],
+        on_duty_users= on_duty_users,
+        off_duty_users=off_duty_users,
         current_user=current_user,
     )
 
@@ -40,17 +42,18 @@ def add_user():
 
 @bp.route('/update_user/<email>', methods=['GET', 'POST'])
 def update_user(email):
-    user = db.get_user(email)
     if request.method == 'POST':
         db.upsert_user(email, request.form.get('display_name'))
         return redirect('/')
     else:
         cache_key = 'ldap_user_' + email
         ldap_user = get_cache(cache_key)
+
         if ldap_user is None:
             ldap_user = authentication.get_ldap_user(email)
             set_cache(cache_key, ldap_user)
 
+        user = db.get_user(email)
         return render_template('/main/update_user.html', user=user, ldap_user=ldap_user)
 
 
