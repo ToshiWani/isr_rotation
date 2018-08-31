@@ -46,6 +46,10 @@ def update_rotation(email, is_duty, seq):
 
 
 def move_next():
+    """
+    Increment seq of on-duty users
+    :return: All users
+    """
     users = list(mongo.db.users.find())
     max_seq = max(u.get('seq', -1) for u in users)
     if max_seq >= 0:
@@ -55,7 +59,6 @@ def move_next():
                 mongo.db.users.update_one({'_id': u['_id']}, {'$set': {'seq': 0}})
             else:
                 mongo.db.users.update_one({'_id': u['_id']}, {'$set': {'seq': u['seq'] + 1}})
-
 
     return mongo.db.users.find()
 
