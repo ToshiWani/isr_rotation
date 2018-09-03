@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 import isr_rotation.mailer as mailer
 from isr_rotation import database as db
 
-
 bp = Blueprint('api', __name__)
 
 
@@ -30,6 +29,17 @@ def move_next():
         req = request.get_json()
     data = {'users': _encoding_mongo(response)}
     return jsonify(data)
+
+
+@bp.route('/user/delete', methods=['POST'])
+def delete_user():
+    result = {}
+    if request.is_json:
+        data = request.get_json()
+        email = data.get('email')
+        if email:
+            result = db.delete_user(email).raw_result
+    return jsonify(result)
 
 
 def _encoding_mongo(mongo_obj):
