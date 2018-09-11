@@ -127,3 +127,13 @@ def logout():
     return redirect('/')
 
 
+@bp.route('/holiday', methods=['GET', 'POST'])
+@login_required
+def holiday():
+    if request.method == 'POST':
+        date = request.form.get('date')
+        remarks = request.form.get('remarks')
+        db.upasert_holiday(date, remarks)
+
+    holidays = db.get_holidays()
+    return render_template('/main/holiday.html', holidays=holidays)

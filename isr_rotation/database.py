@@ -1,4 +1,7 @@
 from flask_pymongo import PyMongo
+from dateutil.parser import isoparse
+from datetime import timedelta, timezone, datetime
+
 
 mongo = PyMongo()
 
@@ -66,3 +69,38 @@ def move_next():
 def get_current_user():
     return mongo.db.users.find_one({'is_current': True})
 
+
+def upasert_holiday(date, remarks):
+    utc_diff = datetime.utcnow() - datetime.now()
+    utc = isoparse(date) + utc_diff
+    return mongo.db.holidays.update_one(
+        {'date': utc},
+        {
+            '$set': {
+                'date': utc,
+                'remarks': remarks
+            }
+        },
+        upsert=True
+    )
+
+
+def add_vacation(start_date, end_date, remarks):
+    # start = parse(start_date)
+    # end = parse(end_date) + timedelta(days=1) + timedelta(seconds=-1)
+    # return mongo.db.holidays.insert_one({
+    #     'start_date': start,
+    #     'end_date': end,
+    #     'remarks': remarks
+    # })
+    pass
+
+
+def get_holidays():
+    data = mongo.db.holidays.find().sort('date')
+    utc_diff = datetime.utcnow() - datetime.now()
+    result = []
+    for d in data:
+        result.append({'date': d.get('date') - utc_diff, 'remarks': d.get('remarks')})
+
+    return result
