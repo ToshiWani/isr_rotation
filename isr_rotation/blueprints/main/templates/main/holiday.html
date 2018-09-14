@@ -34,9 +34,11 @@
                                 <div>{{ h.remarks }}</div>
                             </div>
                             <div class="col m12 l3">
-                                <button type="submit" class="waves-effect waves-light btn red right" href="#">
+                                <a class="waves-effect waves-red btn-flat red-text right modal-trigger delete-holiday"
+                                   href="#delete-holiday-modal"
+                                   data-holidayid="{{ h.holiday_id }}" data-holiday="{{ h.date.date() }}">
                                     <i class="material-icons">delete</i>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     {% endfor %}
@@ -47,6 +49,20 @@
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal (Delete) -->
+    <div id="delete-holiday-modal" class="modal">
+        <div class="modal-content">
+            <h4>Delete User</h4>
+            <p>Please confirm deleting holiday <span class="deleting-holiday"></span></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+            <a href="#!" class="modal-close waves-effect waves-light btn red" id="delete-holiday-confirmation">
+                <i class="material-icons left">delete</i>Delete
+            </a>
         </div>
     </div>
 {% endblock %}
@@ -65,6 +81,35 @@
                 minDate: now,
                 disableWeekends: true,
                 format: 'yyyy-mm-dd',
+            });
+
+            //
+            // Delete holiday
+            //
+            var deleteButtons = document.getElementsByClassName('delete-holiday');
+            for (var i = 0; i < deleteButtons.length; i++) {
+                deleteButtons[i].addEventListener('click', function () {
+                    // Extract selected holiday
+                    var holidayId = this.getAttribute('data-holidayid');
+                    var d = document.getElementsByClassName('deleting-holiday');
+                    // Passing deleting email to modal
+                    d[0].innerHTML = this.getAttribute('data-holiday');
+                    document.getElementById('delete-holiday-confirmation').setAttribute('data-holidayid', holidayId);
+                });
+            }
+
+            // Confirming to delete event
+            document.getElementById('delete-holiday-confirmation').addEventListener('click', function () {
+                var holidayId = this.getAttribute('data-holidayid');
+                console.log(holidayId);
+                axios.post('/api/holiday/delete', {'holiday_id': holidayId})
+                    .then(function (response) {
+                        console.log(response);
+                        location.reload();
+                    })
+                    .catch(function (error) {
+                        M.toast({html: 'Error while deleting user', classes: 'pink'});
+                    });
             });
         });
     </script>

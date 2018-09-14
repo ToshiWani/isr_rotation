@@ -1,7 +1,7 @@
 from flask_pymongo import PyMongo
 from dateutil.parser import isoparse
 from datetime import timedelta, timezone, datetime
-
+import shortuuid
 
 mongo = PyMongo()
 
@@ -78,11 +78,30 @@ def upasert_holiday(date, remarks):
         {
             '$set': {
                 'date': utc,
-                'remarks': remarks
+                'remarks': remarks,
+                'holiday_id': shortuuid.random(6)
             }
         },
         upsert=True
     )
+
+
+def get_holidays():
+    data = mongo.db.holidays.find().sort('date')
+    utc_diff = datetime.utcnow() - datetime.now()
+    result = []
+    for d in data:
+        result.append({
+            'holiday_id': d.get('holiday_id'),
+            'date': d.get('date') - utc_diff,
+            'remarks': d.get('remarks')
+        })
+
+    return result
+
+
+def delete_holiday(holiday_id):
+    return mongo.db.holidays.delete_one({'holiday_id': holiday_id})
 
 
 def add_vacation(start_date, end_date, remarks):
@@ -96,11 +115,4 @@ def add_vacation(start_date, end_date, remarks):
     pass
 
 
-def get_holidays():
-    data = mongo.db.holidays.find().sort('date')
-    utc_diff = datetime.utcnow() - datetime.now()
-    result = []
-    for d in data:
-        result.append({'date': d.get('date') - utc_diff, 'remarks': d.get('remarks')})
 
-    return result

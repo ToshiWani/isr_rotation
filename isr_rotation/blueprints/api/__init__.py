@@ -42,6 +42,18 @@ def delete_user():
     return jsonify(result)
 
 
+@bp.route('/holiday/delete', methods=['POST'])
+def delete_holiday():
+    result = {}
+    if request.is_json:
+        data = request.get_json()
+        holiday_id = data.get('holiday_id')
+        if holiday_id:
+            result = db.delete_holiday(holiday_id).raw_result
+    return jsonify(result)
+
+
+
 def _encoding_mongo(mongo_obj):
     result = []
     for kvp in mongo_obj:

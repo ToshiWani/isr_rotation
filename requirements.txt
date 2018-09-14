@@ -13,7 +13,7 @@ MarkupSafe==1.0
 pyasn1==0.4.4
 pymongo==3.7.1
 python-dateutil==2.7.3
-shortid==0.1.2
+shortuuid==0.5.0
 six==1.11.0
 Werkzeug==0.14.1
 WTForms==2.2.1
