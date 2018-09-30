@@ -87,15 +87,42 @@
             var now = new Date(moment());
             var startDateElem = document.querySelector('#start-date');
             var endDateElem = document.querySelector('#end-date');
-            var datePickerOptions = {
+
+            // Start date picker
+            var startDatePicker = M.Datepicker.init(startDateElem, {
                 setDefaultDate: true,
                 defaultDate: now,
                 minDate: now,
                 disableWeekends: true,
-            };
+                onClose: correctEndDate
+            });
 
-            M.Datepicker.init(startDateElem, datePickerOptions);
-            M.Datepicker.init(endDateElem, datePickerOptions);
+            // End date picker
+            var endDatePicker = M.Datepicker.init(endDateElem, {
+                setDefaultDate: true,
+                defaultDate: now,
+                minDate: now,
+                disableWeekends: true,
+                onClose: correctStartDate
+            });
+
+            function correctEndDate() {
+                var startDate = moment(document.getElementById('start-date').value, 'MMM DD, YYYY');
+                var endDate = moment(document.getElementById('end-date').value, 'MMM DD, YYYY');
+                // Correct end date if start date is newer than end date
+                if(startDate > endDate){
+                    document.getElementById('end-date').value = startDate.format('MMM DD, YYYY');
+                }
+            }
+
+            function correctStartDate() {
+                var startDate = moment(document.getElementById('start-date').value, 'MMM DD, YYYY');
+                var endDate = moment(document.getElementById('end-date').value, 'MMM DD, YYYY');
+                // Correct end date if start date is newer than end date
+                if(startDate > endDate){
+                    document.getElementById('start-date').value = endDate.format('MMM DD, YYYY');
+                }
+            }
 
             //
             //  Delete
@@ -113,22 +140,22 @@
             }
 
             // Confirming to delete
-            document.getElementById('delete-vacation-confirmation').addEventListener('click', function(){
+            document.getElementById('delete-vacation-confirmation').addEventListener('click', function () {
                 var hash = this.getAttribute('data-hash');
                 var email = this.getAttribute('data-email');
                 console.log(hash, email);
                 axios.delete('/api/users/' + email + '/vacations/' + hash)
-                    .then(function(response){
+                    .then(function (response) {
                         console.log('response', response);
                         //Redirect to current page
                         window.location.replace('{{ request.path }}');
                     })
-                    .catch(function(error){
+                    .catch(function (error) {
                         console.log(error);
                         M.toast({html: 'Error while deleting', classes: 'pink'});
                     });
             });
-
         });
+
     </script>
 {% endblock %}
