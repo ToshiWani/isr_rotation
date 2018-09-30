@@ -56,7 +56,7 @@
     <!-- Modal (Delete) -->
     <div id="delete-holiday-modal" class="modal">
         <div class="modal-content">
-            <h4>Delete User</h4>
+            <h4>Delete Holiday</h4>
             <p>Please confirm deleting holiday <span class="deleting-holiday"></span></p>
         </div>
         <div class="modal-footer">
@@ -105,10 +105,11 @@
                 axios.post('/api/holiday/delete', {'holiday_id': holidayId})
                     .then(function (response) {
                         console.log(response);
-                        location.reload();
+                        //Redirect to current page
+                        window.location.replace('{{ request.path }}');
                     })
                     .catch(function (error) {
-                        M.toast({html: 'Error while deleting user', classes: 'pink'});
+                        M.toast({html: 'Error while deleting', classes: 'pink'});
                     });
             });
         });

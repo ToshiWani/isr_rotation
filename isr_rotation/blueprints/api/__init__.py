@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, abort
 import isr_rotation.mailer as mailer
 from isr_rotation import database as db
 
@@ -52,6 +52,16 @@ def delete_holiday():
             result = db.delete_holiday(holiday_id).raw_result
     return jsonify(result)
 
+
+@bp.route('/users/<email>/vacations/<vacation_hash>', methods=['DELETE'])
+def delete_vacation(email, vacation_hash):
+    user = db.get_user(email)
+    if user is None:
+        abort(500)
+
+    result = db.delete_vacation(email, vacation_hash)
+
+    return jsonify({'status': 'ok', 'modified_count': result.modified_count})
 
 
 def _encoding_mongo(mongo_obj):

@@ -136,10 +136,26 @@ def get_vacation_by_hash(vacation_hash):
     )
 
 
+def delete_vacation(email, vacation_hash):
+    try:
+        return mongo.db.users.update_one(
+            {'email': email},
+            {'$pull': {
+                'vacations': {
+                    'hash': vacation_hash
+                }
+            }},
+            upsert=False
+        )
+    except Exception as e:
+        print(e)
+
+
 def _get_utf_midnight(date):
     utc_diff = datetime.utcnow() - datetime.now()
     result = date + utc_diff
     return result
+
 
 def _get_vacation_hash(email, start_date, end_date):
     """
@@ -147,8 +163,8 @@ def _get_vacation_hash(email, start_date, end_date):
     :param email: email
     :param start_date: datetime
     :param end_date: datetime
-    :return: hash
+    :return: string
     """
     hash_key = (email, start_date, end_date)
-    return hash(hash_key)
+    return str(hash(hash_key))
 
