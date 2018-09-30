@@ -1,5 +1,5 @@
 from flask_pymongo import PyMongo
-from dateutil.parser import isoparse
+from dateutil.parser import isoparse, parse
 from datetime import timedelta, timezone, datetime
 import shortuuid
 
@@ -104,15 +104,51 @@ def delete_holiday(holiday_id):
     return mongo.db.holidays.delete_one({'holiday_id': holiday_id})
 
 
-def add_vacation(start_date, end_date, remarks):
-    # start = parse(start_date)
-    # end = parse(end_date) + timedelta(days=1) + timedelta(seconds=-1)
-    # return mongo.db.holidays.insert_one({
-    #     'start_date': start,
-    #     'end_date': end,
-    #     'remarks': remarks
-    # })
-    pass
+def add_vacation(email, start_date, end_date, remarks):
+    start_date = parse(start_date)
+    end_date = parse(end_date)
+    vacation_hash = _get_vacation_hash(email, start_date, end_date)
+
+    # Check existing vacation
+    vacation = get_vacation_by_hash(vacation_hash)
+
+    if vacation is None:
+        utf_start_date = _get_utf_midnight(start_date)
+        utf_end_date = _get_utf_midnight(end_date)
+        return mongo.db.users.update_one(
+            {'email': email},
+            {'$push': {
+                'vacations': {
+                    'hash': vacation_hash,
+                    'start_date': utf_start_date,
+                    'end_date': utf_end_date,
+                    'remarks': remarks
+                }
+            }}
+        )
+    else:
+        raise KeyError
 
 
+def get_vacation_by_hash(vacation_hash):
+    return mongo.db.users.find_one(
+        {'vacations.hash': vacation_hash}
+    )
+
+
+def _get_utf_midnight(date):
+    utc_diff = datetime.utcnow() - datetime.now()
+    result = date + utc_diff
+    return result
+
+def _get_vacation_hash(email, start_date, end_date):
+    """
+    Create hash for vacation
+    :param email: email
+    :param start_date: datetime
+    :param end_date: datetime
+    :return: hash
+    """
+    hash_key = (email, start_date, end_date)
+    return hash(hash_key)
 

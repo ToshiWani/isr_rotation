@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash, g
+from flask import Blueprint, render_template, redirect, request, url_for, current_app, flash, g, abort
 from isr_rotation import database as db
 import isr_rotation.mailer as mailer
 import isr_rotation.authentication as authentication
@@ -137,3 +137,25 @@ def holiday():
 
     holidays = db.get_holidays()
     return render_template('/main/holiday.html', holidays=holidays)
+
+
+@bp.route('/vacation/<email>', methods=['GET'])
+def vacation(email):
+    user = db.get_user(email)
+    return abort(404) if user is None else render_template('/main/vacation.html', user=user)
+
+
+@bp.route('/vacation/<email>', methods=['POST'])
+def post_vacation(email):
+    start_date = request.form.get('start-date')
+    end_date = request.form.get('end-date')
+    remarks = request.form.get('remarks')
+
+    try:
+        result = db.add_vacation(email, start_date, end_date, remarks)
+    except KeyError:
+        flash('Start date and end date are duplicated')
+
+    user = db.get_user(email)
+    return render_template('/main/vacation.html', user=user)
+

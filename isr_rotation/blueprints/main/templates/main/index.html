@@ -36,7 +36,7 @@
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
-                                <a href="#">
+                                <a href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
                                 </a>
                                 <a class="modal-trigger delete-user" href="#deleteUserModal"
@@ -68,7 +68,7 @@
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
-                                <a href="#">
+                                <a href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
                                 </a>
                                 <a class="modal-trigger delete-user" href="#deleteUserModal"

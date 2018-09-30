@@ -1,68 +1,71 @@
-{% extends "layout.html" %}
-{% block body %}
+{% extends '/main/base.html' %}
 
+{% block title %}Main Page{% endblock %}
+
+{% block content %}
     <div class="row">
         <div class="col s12">
-
             <div class="card">
                 <div class="card-content">
-                    <span class="card-title">Vacation - {{ user.name }}</span>
-                    <table>
-                        <tbody>
+                    <span class="card-title">Vacation - {{ user.display_name }}</span>
+                    <div class="row">
                         <form method="post">
-                            <tr>
-                                <td>
-                                    <div class="input-field">
-                                        <input type="text" id="startVac" name="start_date" class="validate">
-                                        <label>Start Date</label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="input-field">
-                                        <input type="text" id="endVac" name="end_date" class="validate">
-                                        <label>End Date</label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <button type="submit" class="waves-effect waves-light btn blue right">
-                                        <i class="material-icons left">add</i>
-                                        Add
-                                    </button>
-                                </td>
-                            </tr>
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="start-date" class="datepicker" id="start-date">
+                                <label>Start</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="end-date" class="datepicker" id="end-date">
+                                <label>End</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="remarks" class="validate">
+                                <label>Remarks</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <button type="submit" class="waves-effect waves-light btn light-blue right"
+                                        id="add-button">
+                                    <i class="material-icons left">add</i>Add
+                                </button>
+                            </div>
                         </form>
-                        {% for m in model %}
-                            <tr>
-                                <td>{{ m.start_date }}</td>
-                                <td>{{ m.end_date }}</td>
-                                <td>
-                                    <a href="/vacation/delete/{{ m.userid }}/{{ m.id }}" data-userid="{{ m.id }}"
-                                       class="waves-effect waves-light btn red right">
-                                        Delete <i class="material-icons left">delete</i>
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
+                    </div>
+                    {% for v in user.vacations %}
+                        <div class="row">
+                            <div class="col m12 l3">
+                                <div>{{ v.start_date.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <div>{{ v.end_date.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <div>{{ v.remarks }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <a class="waves-effect waves-red btn-flat red-text right modal-trigger delete-holiday"
+                                   href="#delete-holiday-modal"
+                                   data-holidayid="{{ v.holiday_id }}" data-holiday="{{ v.start_date.date() }}">
+                                    <i class="material-icons">delete</i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
-
-
+                <div class="card-action right-align">
+                    <a class="waves-effect waves-light btn-flat light-blue-text" href="/" id="btn-ok">
+                        <i class="material-icons left">check</i>OK
+                    </a>
+                </div>
             </div>
-
         </div>
     </div>
-
-    <div class="row">
-        <div class="col s12">
-            <a href="/" type="button" class="modal-action modal-close waves-effect waves-blue btn-flat right">
-                <i class="material-icons teal-text left">check</i>OK
-            </a>
-        </div>
-    </div>
-
 {% endblock %}
 
-
 {% block scripts %}
+    {{ super() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+
+        });
+    </script>
 {% endblock %}
