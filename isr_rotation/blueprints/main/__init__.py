@@ -5,6 +5,7 @@ import isr_rotation.authentication as authentication
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login.forms import LDAPLoginForm
 from isr_rotation.caching import get_cache, set_cache
+import datetime
 
 
 bp = Blueprint('main', __name__, template_folder='templates')
@@ -19,14 +20,17 @@ def before_request():
 @bp.route('/', methods=['GET'])
 @login_required
 def home():
-    users = db.get_all_user()
-    on_duty_users = sorted([u for u in users if u.get('is_duty')], key=lambda u:u.get('seq'))
-    off_duty_users = [u for u in users if not u.get('is_duty')]
+    on_duty_users = sorted(db.get_all_on_duty_user(), key=lambda u: u.get('disp_seq'))
+    off_duty_users = db.get_all_off_duty_user()
+    current_rotation = db.get_current_rotation()
+    next_rotation = db.get_next_rotation()
+
     return render_template(
         '/main/index.html',
-        on_duty_users= on_duty_users,
+        on_duty_users=on_duty_users,
         off_duty_users=off_duty_users,
-        current_user=current_user,
+        current_rotation=current_rotation,
+        next_rotation=next_rotation
     )
 
 
@@ -36,14 +40,14 @@ def add_user():
     if request.method == 'GET':
         return render_template('/main/add_user.html')
     else:
-        db.upsert_user(request.form['email'], request.form['display_name'])
+        db.add_user(request.form['email'], request.form['display_name'])
         return redirect('/')
 
 
 @bp.route('/update_user/<email>', methods=['GET', 'POST'])
 def update_user(email):
     if request.method == 'POST':
-        db.upsert_user(email, request.form.get('display_name'))
+        db.update_user(email, request.form.get('display_name'))
         return redirect('/')
     else:
         cache_key = 'ldap_user_' + email

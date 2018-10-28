@@ -4,6 +4,10 @@ from isr_rotation import database as db
 
 bp = Blueprint('api', __name__)
 
+#
+# TODO: Rename end points for complying REST naming conventions
+#
+
 
 @bp.route('/get_user', methods=['POST'])
 def get_user():
@@ -27,7 +31,7 @@ def move_next():
     response = db.move_next()
     if request.is_json:
         req = request.get_json()
-    data = {'users': _encoding_mongo(response)}
+    data = {'current': response}
     return jsonify(data)
 
 
@@ -39,6 +43,7 @@ def delete_user():
         email = data.get('email')
         if email:
             result = db.delete_user(email).raw_result
+
     return jsonify(result)
 
 
