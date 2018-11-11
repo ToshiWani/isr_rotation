@@ -11,9 +11,28 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <!-- dragula -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css"/>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
     {% endblock %}
 </head>
-<body class="blue-grey">
+<body class="indigo lighten-5">
+
+<!-- Dropdown Structure -->
+<ul id="dropdown-settings" class="dropdown-content">
+    <li>
+        <a href="{{ url_for('main.add_user') }}">Add User</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.holiday') }}">Holidays</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+        <a href="{{ url_for('main.auth') }}">Auth. Test</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.send_email') }}">Email Test</a>
+    </li>
+</ul>
 
 <nav class="light-blue" style="margin-bottom: 3rem;">
     <div class="container">
@@ -23,6 +42,12 @@
                 <li>
                     <a href="{{ url_for('main.update_user', email=g.user.username) }}" class="tooltipped" data-tooltip="View & Edit User Data">
                         <i class="material-icons left">person</i>{{ g.user.display_name }}
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-trigger" href="#!" data-target="dropdown-settings" data-tooltip="Settings">
+                        <i class="material-icons left">settings</i>
+                        Settings
                     </a>
                 </li>
                 <li>

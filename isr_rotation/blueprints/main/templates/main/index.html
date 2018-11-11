@@ -5,27 +5,32 @@
 
 {% block content %}
 
-
-
     <div class="row">
         <div class="col s12">
-            <a class="waves-effect btn-flat" href="{{ url_for('main.add_user') }}">Add user</a>
-            <a class="waves-effect btn-flat" href="{{ url_for('main.delete_user') }}">Delete user</a>
-            <a class="waves-effect btn-flat" href="{{ url_for('main.send_email') }}">Email</a>
-            <a class="waves-effect btn-flat" href="{{ url_for('main.auth') }}">Authentication Test</a>
-            <a class="waves-effect btn-flat" href="{{ url_for('main.holiday') }}">Holidays</a>
-            <a class="waves-effect btn-flat" href="#" id="btnMoveNext">Move Next</a>
-            <a class="waves-effect btn-flat" href="#" id="btnResendEmail">Resend Email</a>
-            <a class="waves-effect btn-flat" href="#" id="btnSave">Save</a>
-            <a class="waves-effect btn-flat" href="#" id="btnReset">Reset</a>
+            <a class="waves-effect btn-flat" href="#" id="btnMoveNext">
+                <i class="material-icons left">fast_forward</i>
+                Move Next
+            </a>
+            <a class="waves-effect btn-flat" href="#" id="btnResendEmail">
+                <i class="material-icons left">send</i>
+                Resend Email
+            </a>
+            <a class="waves-effect btn-flat" href="#" id="btnSave">
+                <i class="material-icons left">save_alt</i>
+                Save
+            </a>
+            <a class="waves-effect btn-flat" href="#" id="btnReset">
+                <i class="material-icons left">refresh</i>
+                Reset
+            </a>
         </div>
     </div>
 
     <div class="row">
-        <div class="col s12 m6">
+        <div class="col s12 m12 l12 xl6">
             <div class="card">
                 <div class="card-content">
-                    <div class="card-title">Off Duty</div>
+                    <div class="card-title">Inactive</div>
                 </div>
                 <div id="left" class="collection">
                     {% for u in off_duty_users %}
@@ -33,15 +38,15 @@
                             <i class="material-icons left">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
+                                <a class="modal-trigger delete-user" href="#deleteUserModal"
+                                   data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
+                                    <i class="material-icons red-text right">delete</i>
+                                </a>
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
                                 <a href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
-                                </a>
-                                <a class="modal-trigger delete-user" href="#deleteUserModal"
-                                   data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
-                                    <i class="material-icons right">delete</i>
                                 </a>
                             </div>
                         </div>
@@ -49,10 +54,10 @@
                 </div>
             </div>
         </div>
-        <div class="col s12 m6">
+        <div class="col s12 m12 l12 xl6">
             <div class="card">
                 <div class="card-content">
-                    <div class="card-title">On Duty</div>
+                    <div class="card-title">Active</div>
                 </div>
                 <div id="right" class="collection">
                     {% for u in on_duty_users %}
@@ -71,15 +76,15 @@
                                     <span class="light-blue-text left">Next</span>
                                 {% endif %}
 
+                                <a class="modal-trigger delete-user" href="#deleteUserModal"
+                                   data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
+                                    <i class="material-icons red-text right">delete</i>
+                                </a>
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
                                 <a href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
-                                </a>
-                                <a class="modal-trigger delete-user" href="#deleteUserModal"
-                                   data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
-                                    <i class="material-icons right">delete</i>
                                 </a>
                             </div>
                         </div>
