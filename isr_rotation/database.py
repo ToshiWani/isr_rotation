@@ -16,6 +16,7 @@ def get_all_user():
 
 
 def get_all_on_duty_user():
+    _sync_all_vacation()
     return list(mongo.db.users.find({'is_duty': {'$eq': True}}))
 
 

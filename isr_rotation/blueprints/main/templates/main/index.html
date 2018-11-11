@@ -58,13 +58,19 @@
                     {% for u in on_duty_users %}
                         <div class="collection-item {{ "grey lighten-4 grey-text" if u.is_vacation }}" data-email="{{ u.email }}" data-seq="{{ u.seq }}">
                             <i class="material-icons left">drag_indicator</i>
-                            <span>{{ u.display_name }} | {{ u.is_vacation }} | {{ u.seq }}</span>
+                            <span>
+                                {{ u.display_name }}
+                                {% if u.is_vacation %}
+                                    <span class="grey-text">(Vacation)</span>
+                                {% endif %}
+                            </span>
                             <div class="secondary-content">
                                 {% if u.seq == current_rotation %}
                                     <span class="orange-text left">Current</span>
                                 {% elif u.seq == next_rotation %}
                                     <span class="light-blue-text left">Next</span>
                                 {% endif %}
+
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
