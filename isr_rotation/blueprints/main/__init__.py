@@ -146,7 +146,10 @@ def holiday():
 @bp.route('/vacation/<email>', methods=['GET'])
 def vacation(email):
     user = db.get_user(email)
-    return abort(404) if user is None else render_template('/main/vacation.html', user=user)
+    if user is None:
+        return abort(404)
+    else:
+        return render_template('/main/vacation.html', user=user)
 
 
 @bp.route('/vacation/<email>', methods=['POST'])

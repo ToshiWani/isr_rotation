@@ -27,7 +27,7 @@ def count_on_duty_users() -> int:
     return mongo.db.users.find({'is_duty': {'$eq': True}}).count()
 
 
-def get_user(email: str) -> dict:
+def get_user(email: str) -> Optional[dict]:
     """
     Get one user by email
     :param email:
@@ -36,7 +36,7 @@ def get_user(email: str) -> dict:
     return next(iter(mongo.db.users.find({'email': email})), None)
 
 
-def get_user_by_seq(seq: int) -> dict:
+def get_user_by_seq(seq: int) -> Optional[dict]:
     return next(iter(mongo.db.users.find({'seq': seq})), None)
 
 
