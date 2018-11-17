@@ -170,3 +170,27 @@ def post_vacation(email):
     user = db.get_user(email)
     return render_template('/main/vacation.html', user=user)
 
+
+@bp.route('/email_settings', methods=['GET'])
+def email_settings():
+    settings = db.get_email_settings()
+    return render_template(
+        '/main/email_settings.html',
+        from_email=settings.get('from_email'),
+        subject=settings.get('subject'),
+        body=settings.get('body'),
+    )
+
+
+@bp.route('/email_settings', methods=['POST'])
+def email_settings_post():
+    from_email = request.form.get('from_email')
+    subject = request.form.get('subject')
+    body = request.form.get('body')
+
+    if from_email and subject and body:
+        db.update_email_settings(from_email, subject, body)
+        flash('<i class="material-icons">check_circle</i> Saved!')
+
+    return redirect('/email_settings')
+

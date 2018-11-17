@@ -282,6 +282,45 @@ def delete_vacation(email, vacation_hash):
         print(e)
 
 
+def get_all_settings():
+    result = mongo.db.settings.find_one()
+
+    if result is None:
+        result = {
+            'email_settings': {
+                'from_email': 'isrequests@infragistics.com',
+                'subject': '{{ display_name }} is ISR Rotation Today',
+                'body': 'Congratulations, {{ display_name }}! You are ISR support rotation today.'
+            }
+        }
+
+        mongo.db.settings.insert_one(result)
+
+    return result
+
+
+def get_email_settings():
+    result = get_all_settings().get('email_settings')
+    return result
+
+
+def update_email_settings(from_email, subject, body):
+    settings = get_all_settings()
+
+    email_settings = {
+        'email_settings': {
+            'from_email': from_email,
+            'subject': subject,
+            'body': body
+        }
+    }
+
+    return mongo.db.settings.find_one_and_update(
+        {'_id': settings['_id']},
+        {'$set': email_settings}
+    )
+
+
 def _get_utf_midnight(date):
     utc_diff = datetime.utcnow() - datetime.now()
     result = date + utc_diff

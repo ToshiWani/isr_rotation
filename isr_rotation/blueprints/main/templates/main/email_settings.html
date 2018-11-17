@@ -1,0 +1,72 @@
+{% extends "main/base.html" %}
+
+{% block title %}Email Settings{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <form method="post">
+                    <div class="card-content">
+                        <span class="card-title">Email Settings</span>
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">alternate_email</i>
+                                        <input type="email" class="validate" id="txt-from-email" name="from_email"
+                                               value="{{ from_email }}"/>
+                                        <label for="txt-from">From Email</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">chat</i>
+                                        <input type="text" class="validate" id="txt-subject" name="subject"
+                                               value="{{ subject }}"/>
+                                        <label for="txt-subject">Subject</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <i class="material-icons prefix">subject</i>
+                                        <textarea id="txtarea-body" class="materialize-textarea"
+                                                  name="body">{{ body }}</textarea>
+                                        <label for="txtarea-body">Email Message Template</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action right-align">
+                        <a href="/" class="waves-effect waves-light btn-flat grey-text">Cancel</a>
+                        <button type="submit" class="waves-effect waves-light btn-flat light-blue-text" id="btn-save">
+                            <i class="material-icons left">save_alt</i>Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        //
+        //  Disable/enable the Save button
+        //
+        document.getElementById('txt-from-email').addEventListener('blur', function(event){
+            var isInvalid = event.target.classList.contains('invalid') || !this.value;
+            if(isInvalid){
+                document.getElementById('btn-save').classList.add('disabled');
+                M.toast({html: '<i class="material-icons left">warning</i> Please enter valid email', classes: 'pink'});
+            }
+            else{
+                document.getElementById('btn-save').classList.remove('disabled');
+            }
+        })
+    </script>
+{% endblock %}
