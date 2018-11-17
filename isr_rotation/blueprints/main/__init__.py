@@ -76,17 +76,7 @@ def delete_user():
         return render_template('/main/delete_user.html', users=users)
 
 
-@bp.route('/email', methods=['GET', 'POST'])
-def send_email():
-    if request.method == 'POST':
-        mailer.send(
-            [request.form.get('recipient')],
-            current_app.config.get('MAIL_DEFAULT_SUBJECT', 'ISR Rotation'),
-            request.form.get('body')
-        )
-        return redirect('/')
-    else:
-        return render_template('/main/email.html')
+
 
 
 @bp.route('/auth', methods=['GET', 'POST'])
@@ -171,6 +161,21 @@ def post_vacation(email):
     return render_template('/main/vacation.html', user=user)
 
 
+# region Email
+
+@bp.route('/email', methods=['GET', 'POST'])
+def send_email():
+    if request.method == 'POST':
+        mailer.send(
+            [request.form.get('recipient')],
+            current_app.config.get('MAIL_DEFAULT_SUBJECT', 'ISR Rotation'),
+            request.form.get('body')
+        )
+        return redirect('/')
+    else:
+        return render_template('/main/email.html')
+
+
 @bp.route('/email_settings', methods=['GET'])
 def email_settings():
     settings = db.get_email_settings()
@@ -193,4 +198,6 @@ def email_settings_post():
         flash('<i class="material-icons">check_circle</i> Saved!')
 
     return redirect('/email_settings')
+
+# endregion
 

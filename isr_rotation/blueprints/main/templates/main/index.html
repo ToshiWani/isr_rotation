@@ -11,7 +11,7 @@
                 <i class="material-icons left">fast_forward</i>
                 Move Next
             </a>
-            <a class="waves-effect btn-flat" href="#" id="btnResendEmail">
+            <a class="waves-effect btn-flat" href="#" id="btn-resend-email">
                 <i class="material-icons left">send</i>
                 Resend Email
             </a>
@@ -276,6 +276,34 @@
                 else{
                     document.getElementById('add-user-button').classList.remove('disabled');
                 }
+            });
+
+            //
+            //  Move Next
+            //
+            document.getElementById('btn-move-next').addEventListener('click', function(event){
+                axios.post('/api/move-next')
+                .then(function (response) {
+                        console.log(response);
+                        location.reload();
+                    })
+                    .catch(function (error) {
+                        M.toast({html: 'Error while moving next iteration', classes: 'pink'});
+                    });
+            });
+
+
+            //
+            //  Resend Email
+            //
+            document.getElementById('btn-resend-email').addEventListener('click', function(event){
+                axios.post('/api/email/resend')
+                .then(function (response) {
+                        console.log(response);
+                    })
+                    .catch(function (error) {
+                        M.toast({html: 'Error while resending email', classes: 'pink'});
+                    });
             });
 
         })();

@@ -1,3 +1,4 @@
+from flask import current_app
 from flask_pymongo import PyMongo
 from dateutil.parser import isoparse, parse
 from datetime import timedelta, timezone, datetime
@@ -288,8 +289,8 @@ def get_all_settings():
     if result is None:
         result = {
             'email_settings': {
-                'from_email': 'isrequests@infragistics.com',
-                'subject': '{{ display_name }} is ISR Rotation Today',
+                'from_email': current_app.config.get('MAIL_DEFAULT_SENDER'),
+                'subject': current_app.config.get('MAIL_DEFAULT_SUBJECT'),
                 'body': 'Congratulations, {{ display_name }}! You are ISR support rotation today.'
             }
         }

@@ -26,13 +26,7 @@ def get_user():
     return jsonify(response)
 
 
-@bp.route('/move_next', methods=['POST'])
-def move_next():
-    response = db.move_next()
-    if request.is_json:
-        req = request.get_json()
-    data = {'current': response}
-    return jsonify(data)
+
 
 
 @bp.route('/user/delete', methods=['POST'])
@@ -67,6 +61,25 @@ def delete_vacation(email, vacation_hash):
     result = db.delete_vacation(email, vacation_hash)
 
     return jsonify({'status': 'ok', 'modified_count': result.modified_count})
+
+
+@bp.route('/move_next', methods=['POST'])
+def move_next():
+    result = mailer.send()
+
+    # None seems meaning "success"
+    if result is None:
+        db.move_next()
+
+    status = 'ok' if result is None else result
+    return jsonify({'status': status})
+
+
+@bp.route('/email/resend', methods=['POST'])
+def resend_email():
+    result = mailer.send()
+    status = 'ok' if result is None else result
+    return jsonify({'status': status})
 
 
 def _encoding_mongo(mongo_obj):
