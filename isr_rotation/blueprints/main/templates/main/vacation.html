@@ -47,7 +47,7 @@
                                    data-hash="{{ v.hash }}"
                                    data-start-date="{{ v.start_date.strftime('%b %d, %Y') }}"
                                    data-end-date="{{ v.end_date.strftime('%b %d, %Y') }}">
-                                    <i class="material-icons">delete</i>
+                                    <i class="material-icons pink-text">delete</i>
                                 </a>
                             </div>
                         </div>
@@ -63,11 +63,13 @@
             <div class="modal" id="delete-vacation-modal">
                 <div class="modal-content">
                     <h4>Delete Vacation</h4>
-                    <p>Please confirm deleting vacation, <span id="deleting-vacation"></span></p>
+                    <blockquote>
+                        <p>Please confirm deleting vacation, <span id="deleting-vacation"></span></p>
+                    </blockquote>
                 </div>
                 <div class="modal-footer">
                     <a href="#" class="modal-close waves-effect waves-effect waves-green btn-flat">Cancel</a>
-                    <a href="#!" class="modal-close waves-effect waves-light btn red"
+                    <a href="#!" class="modal-close waves-effect waves-light btn pink"
                        id="delete-vacation-confirmation" data-hash="" data-email="{{ user.email }}">
                         <i class="material-icons left">delete</i>Delete
                     </a>

@@ -35,17 +35,17 @@
                                 <div>{{ h.remarks }}</div>
                             </div>
                             <div class="col m12 l3">
-                                <a class="waves-effect waves-red btn-flat red-text right modal-trigger delete-holiday"
+                                <a class="waves-effect waves-red btn-flat right modal-trigger delete-holiday"
                                    href="#delete-holiday-modal"
                                    data-holidayid="{{ h.holiday_id }}" data-holiday="{{ h.date.date() }}">
-                                    <i class="material-icons">delete</i>
+                                    <i class="material-icons pink-text">delete</i>
                                 </a>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
                 <div class="card-action right-align">
-                    <a class="waves-effect waves-light btn-flat light-blue-text" href="#" id="btnReset">
+                    <a class="waves-effect waves-light btn-flat light-blue-text" href="/" id="btnReset">
                         <i class="material-icons left">check</i>OK
                     </a>
                 </div>
@@ -57,11 +57,13 @@
     <div id="delete-holiday-modal" class="modal">
         <div class="modal-content">
             <h4>Delete Holiday</h4>
-            <p>Please confirm deleting holiday <span class="deleting-holiday"></span></p>
+            <blockquote>
+                <p>Please confirm deleting holiday <span class="deleting-holiday"></span></p>
+            </blockquote>
         </div>
         <div class="modal-footer">
             <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-            <a href="#!" class="modal-close waves-effect waves-light btn red" id="delete-holiday-confirmation">
+            <a href="#!" class="modal-close waves-effect waves-light btn pink" id="delete-holiday-confirmation">
                 <i class="material-icons left">delete</i>Delete
             </a>
         </div>
