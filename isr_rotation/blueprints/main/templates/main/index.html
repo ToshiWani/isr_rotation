@@ -30,17 +30,22 @@
         <div class="col s12 m12 l12 xl6">
             <div class="card">
                 <div class="card-content">
-                    <div class="card-title">Inactive</div>
+                    <div class="card-title">
+                        Inactive
+                        <a href="#add-user-modal" class="modal-trigger">
+                            <i class="material-icons right">person_add</i>
+                        </a>
+                    </div>
                 </div>
                 <div id="left" class="collection">
                     {% for u in off_duty_users %}
-                        <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}">
+                        <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
                             <i class="material-icons left">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
                                 <a class="modal-trigger delete-user" href="#deleteUserModal"
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
-                                    <i class="material-icons red-text right">delete</i>
+                                    <i class="material-icons pink-text right">delete</i>
                                 </a>
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
@@ -61,7 +66,8 @@
                 </div>
                 <div id="right" class="collection">
                     {% for u in on_duty_users %}
-                        <div class="collection-item {{ "grey lighten-4 grey-text" if u.is_vacation }}" data-email="{{ u.email }}" data-seq="{{ u.seq }}">
+                        <div class="collection-item {{ "grey lighten-4 grey-text" if u.is_vacation }}"
+                             data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
                             <i class="material-icons left">drag_indicator</i>
                             <span>
                                 {{ u.display_name }}
@@ -71,14 +77,14 @@
                             </span>
                             <div class="secondary-content">
                                 {% if u.seq == current_rotation %}
-                                    <span class="orange-text left">Current</span>
+                                    <span class="pink-text left">Current</span>
                                 {% elif u.seq == next_rotation %}
                                     <span class="light-blue-text left">Next</span>
                                 {% endif %}
 
                                 <a class="modal-trigger delete-user" href="#deleteUserModal"
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
-                                    <i class="material-icons red-text right">delete</i>
+                                    <i class="material-icons pink-text right">delete</i>
                                 </a>
                                 <a href="{{ url_for('main.update_user', email=[u.email]) }}">
                                     <i class="material-icons right">edit</i>
@@ -110,6 +116,41 @@
         </div>
     </div>
 
+    <!-- Modal (Add User) -->
+    <div class="modal" id="add-user-modal">
+        <form action="/add_user" method="post">
+            <div class="modal-content">
+                <h4>Add User</h4>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content">
+                                <div class="row">
+                                    <div class="input-field col m12 l6">
+                                        <input type="email" name="email" class="validate" id="add-user-email">
+                                        <label for="add-user-email">Email</label>
+                                    </div>
+                                    <div class="input-field col m12 l6">
+                                        <input type="text" name="display_name">
+                                        <label>Display Name</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">
+                    Cancel
+                </a>
+                <button type="submit" href="#!" class="modal-close waves-effect waves-light btn-flat blue-text disabled" id="add-user-button">
+                    <i class="material-icons left">person_add</i>
+                    Add
+                </button>
+            </div>
+        </form>
+    </div>
 
 {% endblock %}
 
@@ -125,7 +166,7 @@
             var infoMsg = localStorage.getItem('infoMsg');
             if (infoMsg != null) {
                 console.log(infoMsg);
-                M.toast({html: infoMsg, classes: 'light-blue'});
+                M.toast({html: infoMsg});
                 localStorage.removeItem('infoMsg');
             }
 
@@ -212,6 +253,20 @@
                     .catch(function (error) {
                         M.toast({html: 'Error while deleting user', classes: 'pink'});
                     });
+            });
+
+            //
+            //  Add User - Enable/disable the Add button
+            //
+            document.getElementById('add-user-email').addEventListener('blur', function (event) {
+                var isInvalid = event.target.classList.contains('invalid') || !this.value;
+                if(isInvalid){
+                    document.getElementById('add-user-button').classList.add('disabled');
+                    M.toast({html: 'Please enter valid email', classes: 'pink'});
+                }
+                else{
+                    document.getElementById('add-user-button').classList.remove('disabled');
+                }
             });
 
         })();

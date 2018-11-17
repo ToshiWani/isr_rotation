@@ -34,14 +34,18 @@ def home():
     )
 
 
-@bp.route('/add_user', methods=['GET', 'POST'])
+@bp.route('/add_user', methods=['POST'])
 @login_required
 def add_user():
-    if request.method == 'GET':
-        return render_template('/main/add_user.html')
-    else:
+    email = request.form.get('email')
+    display_name = request.form.get('display_name')
+
+    if email and display_name:
         db.add_user(request.form['email'], request.form['display_name'])
-        return redirect('/')
+    else:
+        flash('Email and/or display name cannot be empty')
+
+    return redirect('/')
 
 
 @bp.route('/update_user/<email>', methods=['GET', 'POST'])
