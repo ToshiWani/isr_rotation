@@ -36,14 +36,13 @@ def save_rotation():
     return jsonify(summary)
 
 
-@bp.route('/user/delete', methods=['POST'])
-def delete_user():
+@bp.route('/users/<email>', methods=['DELETE'])
+def delete_user(email):
     result = {}
-    if request.is_json:
-        data = request.get_json()
-        email = data.get('email')
-        if email:
-            result = db.delete_user(email).raw_result
+    if email:
+        result = db.delete_user(email).raw_result
+        log_msg = f'The user ({email}) has been deleted'
+        current_app.logger.info(log_msg)
 
     return jsonify(result)
 
