@@ -34,7 +34,8 @@ def home():
 
 # region User
 
-@bp.route('/add_user', methods=['POST'])
+
+@bp.route('/add-user', methods=['POST'])
 @login_required
 def add_user():
     email = request.form.get('email')
@@ -42,7 +43,7 @@ def add_user():
 
     if email and display_name:
         db.add_user(request.form['email'], request.form['display_name'])
-        current_app.logger.info(f'Added a new user {display_name} ({email})')
+        current_app.logger.info(f'Added a new user, {display_name} ({email})')
     else:
         flash('Email and/or display name cannot be empty')
 

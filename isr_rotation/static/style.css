@@ -7,3 +7,7 @@
 table#system-log{
     font-size: smaller;
 }
+
+table#system-log .system-log-datetime{
+    min-width: 8rem;
+}

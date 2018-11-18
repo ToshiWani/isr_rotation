@@ -29,7 +29,7 @@
                             <table class="highlight" id="system-log">
                                 <thead>
                                 <tr>
-                                    <th>Date (UTC)</th>
+                                    <th class="system-log-datetime">Date (UTC)</th>
                                     <th>Level</th>
                                     <th>Module</th>
                                     <th>Def</th>
@@ -40,7 +40,7 @@
                                 <tbody>
                                 {% for item in logs %}
                                     <tr>
-                                        <td>{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td class="system-log-datetime">{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
                                         <td>{{ item.level }}</td>
                                         <td>{{ item.module }}</td>
                                         <td>{{ item.method }}</td>
