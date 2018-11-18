@@ -11,24 +11,29 @@ bp = Blueprint('api', __name__)
 #
 
 
-@bp.route('/users', methods=['POST'])
-def get_user():
+@bp.route('/rotation', methods=['POST'])
+def save_rotation():
     response = []
-
+    summary = []
     if request.is_json:
         req = request.get_json()
         for i, user in enumerate(req['inactive_users']):
             result = db.update_rotation(user, False, -1)
             response.append({user: result.raw_result})
+            summary.append({user: {'state': 'inactive'}})
 
         for i, user in enumerate(req['active_users']):
             result = db.update_rotation(user, True, i)
             response.append({user: result.raw_result})
+            summary.append({user: {'state': 'active', 'seq': i}})
 
     #   Reset current rotation
     db.set_current_rotation(0)
 
-    return jsonify(response)
+    log_msg = f'Rotation order has been updated.  {summary}'
+    current_app.logger.info(log_msg)
+
+    return jsonify(summary)
 
 
 @bp.route('/user/delete', methods=['POST'])

@@ -200,7 +200,7 @@
                     inactive_users: getUserOrder('inactive-user-list')
                 };
 
-                axios.post('/api/users', result)
+                axios.post('/api/rotation', result)
                     .then(function (response) {
                         console.log(response);
                         localStorage.setItem('infoMsg', 'Saved!');

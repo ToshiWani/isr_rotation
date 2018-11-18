@@ -31,3 +31,7 @@ login_manager.login_view = "main.login"
 # Blueprints
 app.register_blueprint(main_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
+
+
+app.logger.info('Hello! ISR Rotation has been started!')
+
