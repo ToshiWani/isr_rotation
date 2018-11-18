@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, current_app
+from datetime import datetime
 import isr_rotation.mailer as mailer
 from isr_rotation import database as db
 
@@ -9,24 +10,24 @@ bp = Blueprint('api', __name__)
 #
 
 
-@bp.route('/get_user', methods=['POST'])
+@bp.route('/users', methods=['POST'])
 def get_user():
     response = []
 
     if request.is_json:
         req = request.get_json()
-        for i, user in enumerate(req['off_duty']):
+        for i, user in enumerate(req['inactive_users']):
             result = db.update_rotation(user, False, -1)
             response.append({user: result.raw_result})
 
-        for i, user in enumerate(req['on_duty']):
+        for i, user in enumerate(req['active_users']):
             result = db.update_rotation(user, True, i)
             response.append({user: result.raw_result})
 
+    #   Reset current rotation
+    db.set_current_rotation(0)
+
     return jsonify(response)
-
-
-
 
 
 @bp.route('/user/delete', methods=['POST'])
@@ -63,15 +64,27 @@ def delete_vacation(email, vacation_hash):
     return jsonify({'status': 'ok', 'modified_count': result.modified_count})
 
 
-@bp.route('/move_next', methods=['POST'])
+@bp.route('/move-next', methods=['POST'])
 def move_next():
+    # Is today weekend?
+    if datetime.today().weekday() in [5, 6] and not current_app.config.get('ENABLE_WEEKEND'):
+        return jsonify({'status': 'skipped', 'message': 'Today is weekend'})
+
+    # Any active users?
+    if db.count_on_duty_users() == 0:
+        return jsonify({'status': 'skipped', 'message': 'No active users'})
+
+    # Is everyone vacation?
+    if db.is_everyone_on_vacation():
+        return jsonify({'status': 'skipped', 'message': 'All active users are vacation'})
+
     result = mailer.send()
 
     # None seems meaning "success"
     if result is None:
         db.move_next()
 
-    status = 'ok' if result is None else result
+    status = {'status': 'ok', 'message': result} if result is None else {'status': 'error', 'message': result}
     return jsonify({'status': status})
 
 

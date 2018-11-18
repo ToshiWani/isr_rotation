@@ -1,7 +1,8 @@
 SECRET_KEY = ''
-DEBUG = True
+DEBUG = False
 DEBUG_BYPASS_LOGIN = False
 DEBUG_BYPASS_USERNAME = ''
+ENABLE_WEEKEND = False
 #
 # Log level.  Enter DEBUG or INFO
 #

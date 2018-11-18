@@ -20,7 +20,7 @@ def before_request():
 @bp.route('/', methods=['GET'])
 @login_required
 def home():
-    on_duty_users = sorted(db.get_all_on_duty_user(), key=lambda u: u.get('disp_seq'))
+    on_duty_users = sorted(db.get_all_on_duty_user(), key=lambda u: u.get('seq'))
     off_duty_users = db.get_all_off_duty_user()
     current_rotation = db.get_current_rotation()
     next_rotation = db.get_next_rotation()

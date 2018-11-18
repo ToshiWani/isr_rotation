@@ -70,9 +70,7 @@ def add_user(email: str, display_name: str):
             'display_name': display_name,
             'is_duty': False,
             'seq': -1,
-            'is_current': False,
             'vacations': [],
-            'disp_seq': -1,
             'is_vacation': False
         }
     )
@@ -107,7 +105,7 @@ def update_rotation(email, is_duty, seq):
     _sync_vacation(email)
     return mongo.db.users.update_one(
         {'email': email},
-        {'$set': {'is_duty': is_duty, 'seq': seq, 'disp_seq': seq}}
+        {'$set': {'is_duty': is_duty, 'seq': seq}}
     )
 
 
@@ -194,7 +192,8 @@ def move_next() -> Optional[int]:
 
 
 def get_current_user():
-    return mongo.db.users.find_one({'is_current': True})
+    current_seq = get_current_rotation()
+    return mongo.db.users.find_one({'seq': current_seq})
 
 
 def upasert_holiday(date, remarks):
@@ -291,7 +290,7 @@ def get_all_settings():
             'email_settings': {
                 'from_email': current_app.config.get('MAIL_DEFAULT_SENDER'),
                 'subject': current_app.config.get('MAIL_DEFAULT_SUBJECT'),
-                'body': 'Congratulations, {{ display_name }}! You are ISR support rotation today.'
+                'body': 'Congratulations, { display_name }! You are ISR support rotation today.'
             }
         }
 

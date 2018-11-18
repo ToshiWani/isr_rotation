@@ -15,7 +15,7 @@
                 <i class="material-icons left">send</i>
                 Resend Email
             </a>
-            <a class="waves-effect btn-flat" href="#" id="btnSave">
+            <a class="waves-effect btn-flat" href="#" id="btn-save">
                 <i class="material-icons left">save_alt</i>
                 Save
             </a>
@@ -40,7 +40,7 @@
                         </a>
                     </div>
                 </div>
-                <div id="left" class="collection">
+                <div id="inactive-user-list" class="collection">
                     {% for u in off_duty_users %}
                         <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
                             <i class="material-icons left">drag_indicator</i>
@@ -71,7 +71,7 @@
                 <div class="card-content">
                     <div class="card-title">Active</div>
                 </div>
-                <div id="right" class="collection">
+                <div id="active-user-list" class="collection">
                     {% for u in on_duty_users %}
                         <div class="collection-item {{ "grey lighten-4 grey-text" if u.is_vacation }}"
                              data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
@@ -183,8 +183,8 @@
             // Dragula
             //
             var drake = dragula([
-                document.getElementById('left'),
-                document.getElementById('right')
+                document.getElementById('inactive-user-list'),
+                document.getElementById('active-user-list')
             ]);
 
             document.getElementById('btnReset').addEventListener('click', function () {
@@ -194,13 +194,13 @@
             //
             // Save User Rotation
             //
-            document.getElementById('btnSave').addEventListener('click', function () {
+            document.getElementById('btn-save').addEventListener('click', function () {
                 var result = {
-                    off_duty: getUserOrder('left'),
-                    on_duty: getUserOrder('right')
+                    active_users: getUserOrder('active-user-list'),
+                    inactive_users: getUserOrder('inactive-user-list')
                 };
 
-                axios.post('/api/get_user', result)
+                axios.post('/api/users', result)
                     .then(function (response) {
                         console.log(response);
                         localStorage.setItem('infoMsg', 'Saved!');
@@ -229,7 +229,7 @@
             //
             document.getElementById('btnMoveNext').addEventListener('click', function () {
                 console.log('btnMoveNext');
-                axios.post('/api/move_next', {})
+                axios.post('/api/move-next', {})
                     .then(function (response) {
                         console.log(response.data);
                         location.reload();
