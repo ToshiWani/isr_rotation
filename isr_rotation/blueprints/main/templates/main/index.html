@@ -7,7 +7,7 @@
 
     <div class="row">
         <div class="col s12">
-            <a class="waves-effect btn-flat" href="#" id="btnMoveNext">
+            <a class="waves-effect btn-flat" href="#" id="btn-move-next">
                 <i class="material-icons left">fast_forward</i>
                 Move Next
             </a>
@@ -19,7 +19,7 @@
                 <i class="material-icons left">save_alt</i>
                 Save
             </a>
-            <a class="waves-effect btn-flat" href="#" id="btnReset">
+            <a class="waves-effect btn-flat" href="#" id="btn-reset">
                 <i class="material-icons left">refresh</i>
                 Reset
             </a>
@@ -187,7 +187,7 @@
                 document.getElementById('active-user-list')
             ]);
 
-            document.getElementById('btnReset').addEventListener('click', function () {
+            document.getElementById('btn-reset').addEventListener('click', function () {
                 location.reload();
             });
 
@@ -224,17 +224,6 @@
                 return result;
             }
 
-            //
-            // Move Next
-            //
-            document.getElementById('btnMoveNext').addEventListener('click', function () {
-                console.log('btnMoveNext');
-                axios.post('/api/move-next', {})
-                    .then(function (response) {
-                        console.log(response.data);
-                        location.reload();
-                    });
-            });
 
             //
             // Delete User
@@ -281,7 +270,7 @@
             //
             //  Move Next
             //
-            document.getElementById('btn-move-next').addEventListener('click', function(event){
+            document.getElementById('btn-move-next').addEventListener('click', function(){
                 axios.post('/api/move-next')
                 .then(function (response) {
                         console.log(response);
@@ -296,10 +285,11 @@
             //
             //  Resend Email
             //
-            document.getElementById('btn-resend-email').addEventListener('click', function(event){
+            document.getElementById('btn-resend-email').addEventListener('click', function(){
                 axios.post('/api/email/resend')
                 .then(function (response) {
                         console.log(response);
+                        M.toast({html: '<i class="material-icons prefix">check_circle</i> Email has been sent', classes: 'pink'});
                     })
                     .catch(function (error) {
                         M.toast({html: 'Error while resending email', classes: 'pink'});
