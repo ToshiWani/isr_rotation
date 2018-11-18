@@ -3,6 +3,7 @@ from datetime import datetime
 import isr_rotation.mailer as mailer
 from isr_rotation import database as db
 
+
 bp = Blueprint('api', __name__)
 
 #
@@ -78,21 +79,24 @@ def move_next():
     if db.is_everyone_on_vacation():
         return jsonify({'status': 'skipped', 'message': 'All active users are vacation'})
 
-    result = mailer.send()
-
-    # None seems meaning "success"
-    if result is None:
+    try:
         db.move_next()
 
-    status = {'status': 'ok', 'message': result} if result is None else {'status': 'error', 'message': result}
-    return jsonify({'status': status})
+        # None seems meaning "success"
+        result = mailer.send()
+        return jsonify({'status': 'ok', 'message': result})
+
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(type(e))}), 500
 
 
 @bp.route('/email/resend', methods=['POST'])
 def resend_email():
-    result = mailer.send()
-    status = 'ok' if result is None else result
-    return jsonify({'status': status})
+    try:
+        result = mailer.send()
+        return jsonify({'status': 'ok', 'message': result})
+    except Exception as e:
+        return jsonify({'status': 'ok', 'message': str(type(e))})
 
 
 def _encoding_mongo(mongo_obj):

@@ -175,7 +175,7 @@
             var infoMsg = localStorage.getItem('infoMsg');
             if (infoMsg != null) {
                 console.log(infoMsg);
-                M.toast({html: infoMsg});
+                M.toast({html: infoMsg, classes:'pink'});
                 localStorage.removeItem('infoMsg');
             }
 
@@ -273,7 +273,7 @@
             document.getElementById('btn-move-next').addEventListener('click', function(){
                 axios.post('/api/move-next')
                 .then(function (response) {
-                        console.log(response);
+                        localStorage.setItem('infoMsg', '<i class="material-icons prefix">check_circle</i> Moved to the next person');
                         location.reload();
                     })
                     .catch(function (error) {
@@ -292,7 +292,7 @@
                         M.toast({html: '<i class="material-icons prefix">check_circle</i> Email has been sent', classes: 'pink'});
                     })
                     .catch(function (error) {
-                        M.toast({html: 'Error while resending email', classes: 'pink'});
+                        M.toast({html: '<i class="material-icons prefix">error</i> Error while resending email', classes: 'pink'});
                     });
             });
 
