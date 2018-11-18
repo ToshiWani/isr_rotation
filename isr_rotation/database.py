@@ -196,6 +196,9 @@ def get_current_user():
     return mongo.db.users.find_one({'seq': current_seq})
 
 
+# region Holiday
+
+
 def upasert_holiday(date, remarks):
     utc_diff = datetime.utcnow() - datetime.now()
     utc = isoparse(date) + utc_diff
@@ -226,8 +229,21 @@ def get_holidays():
     return result
 
 
+def is_holiday_now() -> bool:
+    holidays = get_holidays()
+    is_holiday = False
+    for h in holidays:
+        is_holiday = h['date'].strftime('%x') == datetime.now().strftime('%x')
+        if is_holiday:
+            break
+
+    return is_holiday
+
+
 def delete_holiday(holiday_id):
     return mongo.db.holidays.delete_one({'holiday_id': holiday_id})
+
+# endregion
 
 
 def add_vacation(email, start_date, end_date, remarks):

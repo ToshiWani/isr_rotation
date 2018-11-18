@@ -71,6 +71,11 @@ def delete_vacation(email, vacation_hash):
 
 @bp.route('/move-next', methods=['POST'])
 def move_next():
+    # Is today holiday?
+    if db.is_holiday_now():
+        current_app.logger.info('Today is holiday')
+        return jsonify({'status': 'skipped', 'message': 'Today is holiday'})
+
     # Is today weekend?
     if datetime.today().weekday() in [5, 6] and not current_app.config.get('ENABLE_WEEKEND'):
         current_app.logger.info('Today is weekend')
@@ -124,3 +129,4 @@ def _encoding_mongo(mongo_obj):
             kvp['_id'] = str(kvp['_id'])
             result.append(kvp)
     return result
+

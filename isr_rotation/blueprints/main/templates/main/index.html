@@ -273,8 +273,13 @@
             document.getElementById('btn-move-next').addEventListener('click', function(){
                 axios.post('/api/move-next')
                 .then(function (response) {
-                        localStorage.setItem('infoMsg', '<i class="material-icons prefix">check_circle</i> Moved to the next person');
-                        location.reload();
+                        if (response.data.status === 'ok'){
+                            localStorage.setItem('infoMsg', '<i class="material-icons prefix">check_circle</i> Moved to the next person');
+                            location.reload();
+                        }
+                        else {
+                            M.toast({html: '<i class="material-icons prefix">warning</i>' + response.data.message, classes: 'pink'});
+                        }
                     })
                     .catch(function (error) {
                         M.toast({html: 'Error while moving next iteration', classes: 'pink'});
