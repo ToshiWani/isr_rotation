@@ -184,18 +184,6 @@ def system_log():
 
 # region Email
 
-@bp.route('/email', methods=['GET', 'POST'])
-def send_email():
-    if request.method == 'POST':
-        mailer.send_custom(
-            [request.form.get('recipient')],
-            current_app.config.get('MAIL_DEFAULT_SUBJECT', 'ISR Rotation'),
-            request.form.get('body')
-        )
-        return redirect('/')
-    else:
-        return render_template('/main/email.html')
-
 
 @bp.route('/email_settings', methods=['GET'])
 def email_settings():
