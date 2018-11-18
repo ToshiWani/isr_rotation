@@ -166,7 +166,7 @@ def post_vacation(email):
 @bp.route('/email', methods=['GET', 'POST'])
 def send_email():
     if request.method == 'POST':
-        mailer.send(
+        mailer.send_custom(
             [request.form.get('recipient')],
             current_app.config.get('MAIL_DEFAULT_SUBJECT', 'ISR Rotation'),
             request.form.get('body')
