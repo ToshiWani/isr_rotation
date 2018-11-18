@@ -38,6 +38,27 @@
                                 </div>
                             </div>
                         </div>
+                        <span class="card-title">Available Placeholders</span>
+                        <div class="row">
+                            <div class="col s12 m12 l12 xl6">
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Placeholder</th>
+                                        <th>Value (Example)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for key in placeholders %}
+                                        <tr>
+                                            <td><code>&#x24;&#x7B;{{ key }}&#x7D;</code></td>
+                                            <td>{{ placeholders[key] }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-action right-align">
                         <a href="/" class="waves-effect waves-light btn-flat grey-text">Cancel</a>
@@ -58,13 +79,13 @@
         //
         //  Disable/enable the Save button
         //
-        document.getElementById('txt-from-email').addEventListener('blur', function(event){
+        document.getElementById('txt-from-email').addEventListener('blur', function (event) {
             var isInvalid = event.target.classList.contains('invalid') || !this.value;
-            if(isInvalid){
+            if (isInvalid) {
                 document.getElementById('btn-save').classList.add('disabled');
                 M.toast({html: '<i class="material-icons left">warning</i> Please enter valid email', classes: 'pink'});
             }
-            else{
+            else {
                 document.getElementById('btn-save').classList.remove('disabled');
             }
         })

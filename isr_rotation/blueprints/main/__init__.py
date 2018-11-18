@@ -179,11 +179,13 @@ def send_email():
 @bp.route('/email_settings', methods=['GET'])
 def email_settings():
     settings = db.get_email_settings()
+    placeholders = mailer.get_email_placeholders()
     return render_template(
         '/main/email_settings.html',
         from_email=settings.get('from_email'),
         subject=settings.get('subject'),
         body=settings.get('body'),
+        placeholders=placeholders
     )
 
 
