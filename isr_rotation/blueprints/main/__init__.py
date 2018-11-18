@@ -5,7 +5,6 @@ import isr_rotation.authentication as authentication
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login.forms import LDAPLoginForm
 from isr_rotation.caching import get_cache, set_cache
-import datetime
 
 
 bp = Blueprint('main', __name__, template_folder='templates')
@@ -42,6 +41,7 @@ def add_user():
 
     if email and display_name:
         db.add_user(request.form['email'], request.form['display_name'])
+        current_app.logger.info(f'Added a new user {display_name} ({email})')
     else:
         flash('Email and/or display name cannot be empty')
 

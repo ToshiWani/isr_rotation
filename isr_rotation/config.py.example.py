@@ -8,9 +8,14 @@ ENABLE_WEEKEND = False
 #
 LOG_LEVEL = 'INFO'
 #
-# Mongo DB - Example:  mongodb://localhost:27017/myDatabase
+# Mongo DB
 #
-MONGO_URI = ''
+MONGO_URI = ''  # Example:  mongodb://localhost:27017/myDatabase
+#
+# Mongo DB Logger (MongoHandler)
+#
+MONGO_HANDLER_HOST = ''     # Example - 'mongodb://localhost:27017'
+MONGO_HANDLER_DATABASE_NAME = ''    # Example - 'myDatabase'
 #
 # Mailer
 #
