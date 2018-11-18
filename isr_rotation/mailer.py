@@ -12,7 +12,7 @@ def send():
     try:
         current_user = db.get_current_user()
         if current_user is None:
-            return 'No Active Users'
+            raise LookupError('No current user was found')
 
         users = db.get_all_user()
         recipients = list(map(lambda u: u.get('email'), users))
@@ -35,8 +35,12 @@ def send():
 
         # None seems meaning "success"
         result = mail.send(msg)
-        current_app.logger.info(subject)
+        log_msg = f'Email has been sent. Subject: "{subject}"'
+        current_app.logger.info(log_msg)
         return result
+
+    except LookupError as e:
+        current_app.logger.critical(e.args)
 
     except Exception as e:
         current_app.logger.critical('Failed to send notification email')

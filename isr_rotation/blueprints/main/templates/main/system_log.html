@@ -1,0 +1,67 @@
+{% extends "main/base.html" %}
+
+{% block title %}System Log{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">System Log</span>
+                    <div class="row">
+                        <form class="col s12" method="post">
+                            <div class="row">
+                                <div class="col s12">
+                                    You are viewing top
+                                    <div class="input-field inline">
+                                        <input type="number" class="validate" id="num-record-count" name="record-count" value="{{ record_count }}">
+                                    </div>
+                                    records
+                                    <div class="input-field inline">
+                                        <button class="btn btn-small light-blue" type="submit">Update</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <table class="highlight" id="system-log">
+                                <thead>
+                                <tr>
+                                    <th>Date (UTC)</th>
+                                    <th>Level</th>
+                                    <th>Module</th>
+                                    <th>Def</th>
+                                    <th>Line</th>
+                                    <th>Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in logs %}
+                                    <tr>
+                                        <td>{{ item.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>{{ item.level }}</td>
+                                        <td>{{ item.module }}</td>
+                                        <td>{{ item.method }}</td>
+                                        <td>{{ item.lineNumber }}</td>
+                                        <td>{{ item.message }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}
+{% endblock %}

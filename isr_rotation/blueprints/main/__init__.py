@@ -32,6 +32,7 @@ def home():
         next_rotation=next_rotation
     )
 
+# region User
 
 @bp.route('/add_user', methods=['POST'])
 @login_required
@@ -75,8 +76,9 @@ def delete_user():
     else:
         return render_template('/main/delete_user.html', users=users)
 
+# endregion
 
-
+# region Login
 
 
 @bp.route('/auth', methods=['GET', 'POST'])
@@ -125,6 +127,10 @@ def logout():
     return redirect('/')
 
 
+# endregion
+
+# region Settings
+
 @bp.route('/holiday', methods=['GET', 'POST'])
 @login_required
 def holiday():
@@ -160,6 +166,20 @@ def post_vacation(email):
     user = db.get_user(email)
     return render_template('/main/vacation.html', user=user)
 
+
+@bp.route('/system_log', methods=['GET', 'POST'])
+def system_log():
+    record_count = 100
+
+    if request.method == 'POST':
+        record_count = int(request.form.get('record-count', 100))
+        record_count = 100 if record_count < 1 else record_count
+
+    logs = db.get_log(record_count)
+    return render_template('/main/system_log.html', logs=logs, record_count=record_count)
+
+
+# endregion
 
 # region Email
 
@@ -202,4 +222,3 @@ def email_settings_post():
     return redirect('/email_settings')
 
 # endregion
-

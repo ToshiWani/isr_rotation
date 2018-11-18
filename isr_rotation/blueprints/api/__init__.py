@@ -69,18 +69,22 @@ def delete_vacation(email, vacation_hash):
 def move_next():
     # Is today weekend?
     if datetime.today().weekday() in [5, 6] and not current_app.config.get('ENABLE_WEEKEND'):
+        current_app.logger.info('Today is weekend')
         return jsonify({'status': 'skipped', 'message': 'Today is weekend'})
 
     # Any active users?
     if db.count_on_duty_users() == 0:
-        return jsonify({'status': 'skipped', 'message': 'No active users'})
+        current_app.logger.info('No active users found')
+        return jsonify({'status': 'skipped', 'message': 'No active users found'})
 
     # Is everyone vacation?
     if db.is_everyone_on_vacation():
+        current_app.logger.info('All active users are vacation')
         return jsonify({'status': 'skipped', 'message': 'All active users are vacation'})
 
     try:
         db.move_next()
+        current_app.logger.info('Moved to the next person')
 
         # None seems meaning "success"
         result = mailer.send()
@@ -93,6 +97,16 @@ def move_next():
 @bp.route('/email/resend', methods=['POST'])
 def resend_email():
     try:
+        # Any active users?
+        if db.count_on_duty_users() == 0:
+            current_app.logger.info('No active users found')
+            return jsonify({'status': 'skipped', 'message': 'No active users found'})
+
+        # Is everyone vacation?
+        if db.is_everyone_on_vacation():
+            current_app.logger.info('All active users are vacation')
+            return jsonify({'status': 'skipped', 'message': 'All active users are vacation'})
+
         result = mailer.send()
         return jsonify({'status': 'ok', 'message': result})
     except Exception as e:

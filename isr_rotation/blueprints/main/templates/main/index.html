@@ -281,15 +281,18 @@
                     });
             });
 
-
             //
             //  Resend Email
             //
             document.getElementById('btn-resend-email').addEventListener('click', function(){
                 axios.post('/api/email/resend')
                 .then(function (response) {
-                        console.log(response);
-                        M.toast({html: '<i class="material-icons prefix">check_circle</i> Email has been sent', classes: 'pink'});
+                        if (response.data.status === 'ok'){
+                            M.toast({html: '<i class="material-icons prefix">check_circle</i> Email has been sent', classes: 'pink'});
+                        }
+                        else{
+                            M.toast({html: 'Email was not sent -' +  response.data.message, classes: 'pink'});
+                        }
                     })
                     .catch(function (error) {
                         M.toast({html: '<i class="material-icons prefix">error</i> Error while resending email', classes: 'pink'});

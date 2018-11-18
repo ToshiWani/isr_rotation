@@ -1,5 +1,5 @@
 from flask import current_app
-from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo, ASCENDING, DESCENDING
 from dateutil.parser import isoparse, parse
 from datetime import timedelta, timezone, datetime
 import shortuuid
@@ -320,6 +320,16 @@ def update_email_settings(from_email, subject, body):
         {'$set': email_settings}
     )
 
+# region Logging
+
+
+def get_log(limit=100):
+    result = mongo.db.logs.find().sort('timestamp', DESCENDING).limit(limit)
+    return result
+
+# endregion
+
+# region Private
 
 def _get_utf_midnight(date):
     utc_diff = datetime.utcnow() - datetime.now()
@@ -382,4 +392,5 @@ def _sync_seq():
 
     pass
 
+# endregion
 

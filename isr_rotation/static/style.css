@@ -3,3 +3,7 @@
 .collection{
     overflow: visible!important;
 }
+
+table#system-log{
+    font-size: smaller;
+}
