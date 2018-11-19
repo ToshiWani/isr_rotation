@@ -1,0 +1,163 @@
+{% extends '/main/base.html' %}
+
+{% block title %}Main Page{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Vacation - {{ user.display_name }}</span>
+                    <div class="row">
+                        <form method="post">
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="start-date" class="datepicker" id="start-date">
+                                <label>Start</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="end-date" class="datepicker" id="end-date">
+                                <label>End</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <input type="text" name="remarks" class="validate" value="PTO">
+                                <label>Remarks</label>
+                            </div>
+                            <div class="input-field col m12 l3">
+                                <button type="submit" class="waves-effect waves-light btn light-blue right"
+                                        id="add-button">
+                                    <i class="material-icons left">add</i>Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% for v in user.vacations %}
+                        <div class="row">
+                            <div class="col m12 l3">
+                                <div>{{ v.start_date.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <div>{{ v.end_date.strftime('%b %d, %Y') }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <div>{{ v.remarks }}</div>
+                            </div>
+                            <div class="col m12 l3">
+                                <a class="waves-effect waves-red btn-flat red-text right modal-trigger delete-vacation"
+                                   href="#delete-vacation-modal"
+                                   data-hash="{{ v.hash }}"
+                                   data-start-date="{{ v.start_date.strftime('%b %d, %Y') }}"
+                                   data-end-date="{{ v.end_date.strftime('%b %d, %Y') }}">
+                                    <i class="material-icons pink-text">delete</i>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="card-action right-align">
+                    <a class="waves-effect waves-light btn-flat light-blue-text" href="/" id="btn-ok">
+                        <i class="material-icons left">check</i>OK
+                    </a>
+                </div>
+            </div>
+            <!-- Modal (Delete) -->
+            <div class="modal" id="delete-vacation-modal">
+                <div class="modal-content">
+                    <h4>Delete Vacation</h4>
+                    <blockquote>
+                        <p>Please confirm deleting vacation, <span id="deleting-vacation"></span></p>
+                    </blockquote>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="modal-close waves-effect waves-effect waves-green btn-flat">Cancel</a>
+                    <a href="#!" class="modal-close waves-effect waves-light btn pink"
+                       id="delete-vacation-confirmation" data-hash="" data-email="{{ user.email }}">
+                        <i class="material-icons left">delete</i>Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            //
+            // Initializing the date pickers
+            //
+            var now = new Date(moment());
+            var startDateElem = document.querySelector('#start-date');
+            var endDateElem = document.querySelector('#end-date');
+
+            // Start date picker
+            var startDatePicker = M.Datepicker.init(startDateElem, {
+                setDefaultDate: true,
+                defaultDate: now,
+                minDate: now,
+                disableWeekends: true,
+                onClose: correctEndDate
+            });
+
+            // End date picker
+            var endDatePicker = M.Datepicker.init(endDateElem, {
+                setDefaultDate: true,
+                defaultDate: now,
+                minDate: now,
+                disableWeekends: true,
+                onClose: correctStartDate
+            });
+
+            function correctEndDate() {
+                var startDate = moment(document.getElementById('start-date').value, 'MMM DD, YYYY');
+                var endDate = moment(document.getElementById('end-date').value, 'MMM DD, YYYY');
+                // Correct end date if start date is newer than end date
+                if(startDate > endDate){
+                    document.getElementById('end-date').value = startDate.format('MMM DD, YYYY');
+                }
+            }
+
+            function correctStartDate() {
+                var startDate = moment(document.getElementById('start-date').value, 'MMM DD, YYYY');
+                var endDate = moment(document.getElementById('end-date').value, 'MMM DD, YYYY');
+                // Correct end date if start date is newer than end date
+                if(startDate > endDate){
+                    document.getElementById('start-date').value = endDate.format('MMM DD, YYYY');
+                }
+            }
+
+            //
+            //  Delete
+            //
+            var deleteButtons = document.getElementsByClassName('delete-vacation');
+            for (var i = 0; i < deleteButtons.length; i++) {
+                deleteButtons[i].addEventListener('click', function () {
+                    // Extracting selected vacation
+                    var hash = this.getAttribute('data-hash');
+                    var d = document.querySelector('#deleting-vacation');
+                    // Passing deleting vacation date to modal
+                    d.innerHTML = this.getAttribute('data-start-date') + ' - ' + this.getAttribute('data-end-date');
+                    document.querySelector('#delete-vacation-confirmation').setAttribute('data-hash', hash);
+                });
+            }
+
+            // Confirming to delete
+            document.getElementById('delete-vacation-confirmation').addEventListener('click', function () {
+                var hash = this.getAttribute('data-hash');
+                var email = this.getAttribute('data-email');
+                console.log(hash, email);
+                axios.delete('/api/users/' + email + '/vacations/' + hash)
+                    .then(function (response) {
+                        console.log('response', response);
+                        //Redirect to current page
+                        window.location.replace('{{ request.path }}');
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                        M.toast({html: 'Error while deleting', classes: 'pink'});
+                    });
+            });
+        });
+
+    </script>
+{% endblock %}

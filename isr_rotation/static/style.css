@@ -1,3 +1,22 @@
+/* Overwriting of materialized.css */
+
 .collection{
     overflow: visible!important;
+}
+
+table.table-small-font{
+    font-size: smaller;
+    word-wrap: break-word;
+}
+
+table#system-log .system-log-datetime{
+    min-width: 8rem;
+}
+
+table#table-ldap-data td{
+    word-break: break-all;
+}
+
+.cursor-grab{
+    cursor: grab;
 }

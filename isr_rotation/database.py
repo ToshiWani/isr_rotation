@@ -1,311 +1,405 @@
-from datetime import datetime
+from flask import current_app
+from flask_pymongo import PyMongo, ASCENDING, DESCENDING
+from dateutil.parser import isoparse, parse
+from datetime import timedelta, timezone, datetime
+import shortuuid
+from typing import Optional
+import hashlib
 
-from sqlalchemy.sql import func
+mongo = PyMongo()
 
-from isr_rotation import session, engine
-from isr_rotation.models import User, Config, Vacation, Holiday, Log
-from isr_rotation.logger import Logger
 
-def init_db():
+def get_all_user():
     """
-    Import all modules here that might define models so that they will be registered properly on the metadata.
-    Otherwise, you will have to import them first before calling init_db()
+    Get all users
+    :return: list
     """
-    from isr_rotation import Base
-    Base.metadata.create_all(bind=engine)
-
-    if session.query(Config).count() == 0:
-        config = Config()
-        config.current_seq = -1
-        session.add(config)
-        session.commit()
+    return list(mongo.db.users.find())
 
 
-# region GET - User Info
+def get_all_on_duty_user():
+    _sync_all_vacation()
+    return list(mongo.db.users.find({'is_duty': {'$eq': True}}))
 
 
-def get_all_users():
-    # type: () -> list[User]
-
-    return User.query.all()
+def get_all_off_duty_user():
+    return list(mongo.db.users.find({'is_duty': {'$eq': False}}))
 
 
-def get_user_by_id(user_id):
-    # type: (int) -> User
-    return User.query.filter(User.id == user_id).first()
+def count_on_duty_users() -> int:
+    return mongo.db.users.find({'is_duty': {'$eq': True}}).count()
 
 
-def get_all_email():
-    return User.query.with_entities(User.email).all()
+def get_user(email: str) -> Optional[dict]:
+    """
+    Get one user by email
+    :param email:
+    :return: dict
+    """
+    return next(iter(mongo.db.users.find({'email': email})), None)
 
 
-def count_on_duty():
-    return User.query.filter(User.on_duty).count()
+def get_user_by_seq(seq: int) -> Optional[dict]:
+    return next(iter(mongo.db.users.find({'seq': seq})), None)
 
 
-def get_on_duty_user():
-    if count_on_duty() > 0:
-        return User.query.join(Config, User.seq == Config.current_seq).first()
+def is_everyone_on_vacation() -> bool:
+    """
+    Check if all on-duty users are on vacation
+    :return:
+    """
+    _sync_all_vacation()
+    users = get_all_on_duty_user()
+    result = True
+    for u in users:
+        is_vacation = u.get('is_vacation')
+        if not is_vacation:
+            result = False
+            break
+    return result
+
+
+def add_user(email: str, display_name: str):
+    """
+    Add user
+    :param email:
+    :param display_name:
+    :return: pymongo.results
+    """
+    return mongo.db.users.insert(
+        {
+            'email': email,
+            'display_name': display_name,
+            'is_duty': False,
+            'seq': -1,
+            'vacations': [],
+            'is_vacation': False
+        }
+    )
+
+
+def update_user(email, display_name):
+    """
+    Update user
+    :param email:
+    :param display_name:
+    :return: pymongo.results
+    """
+    user = {'$set': {'email': email, 'display_name': display_name}}
+    result = mongo.db.users.update_one(
+        {'email': email},
+        user,
+        upsert=False
+    )
+    return result
+
+
+def delete_user(email):
+    return mongo.db.users.delete_one({'email': email})
+
+
+def delete_users(emails):
+    query = {'email': {'$in': emails}}
+    return mongo.db.users.delete_many(query)
+
+
+def update_rotation(email, is_duty, seq):
+    result = mongo.db.users.update_one(
+        {'email': email},
+        {'$set': {'is_duty': is_duty, 'seq': seq}}
+    )
+    _sync_vacation(email)
+    return result
+
+
+def get_current_rotation() -> int:
+    result = 0
+    rotation = mongo.db.rotation.find().sort('last_update', -1).limit(1)
+    if rotation.count() == 0:
+        mongo.db.rotation.insert_one({
+            'current': 0,
+            'last_update': datetime.utcnow()
+        })
     else:
+        result = rotation[0]['current']
+
+    return result
+
+
+def set_current_rotation(seq: int) -> None:
+    rotation = mongo.db.rotation.find().sort('last_update', -1).limit(1)
+    if rotation.count() == 0:
+        mongo.db.rotation.insert_one({
+            'current': seq,
+            'last_update': datetime.utcnow()
+        })
+    else:
+        mongo.db.rotation.update_one(
+            {'_id': rotation[0]['_id']},
+            {'$set': {'current': seq, 'last_update': datetime.utcnow()}}
+        )
+
+    pass
+
+
+def get_next_rotation() -> int:
+    # Get current rotation seq
+    current_rotation = get_current_rotation()
+
+    # Count current on-duty users
+    on_duty_count = count_on_duty_users()
+
+    # Return zero if current rotation exceed max. Otherwise increment it.
+    return 0 if current_rotation >= on_duty_count - 1 else current_rotation + 1
+
+
+def move_next() -> Optional[int]:
+    """
+    Increment seq of on-duty users
+    :return: Current rotation
+    """
+    _sync_all_vacation()
+
+    # Count current on-duty users
+    on_duty_count = count_on_duty_users()
+
+    # Exit out if no one is on-duty
+    if on_duty_count < 1:
         return None
 
+    # Exit out if all on-duty users are vacation
+    if is_everyone_on_vacation():
+        return None
 
-# endregion
+    next_rotation = get_next_rotation()
 
-# region GET - Sequence
+    while True:
+        # Find who is on-duty
+        next_user = get_user_by_seq(next_rotation)
 
-
-def get_current_seq():
-    # type: () -> int
-
-    return Config.query.with_entities(Config.current_seq).first().current_seq
-
-
-def get_max_seq():
-    # type: () -> int
-    return session.query(func.max(User.seq).label("max_seq")).first().max_seq
-
-
-def get_user_by_seq(seq):
-    return User.query.filter(User.seq == seq).first()
-
-
-def get_next_seq():
-    # type: () -> int
-
-    """
-        :return: -1
-            - If nobody is on-duty
-            - If everyone is vacation
-
-        :return: same as current:
-            - If only one is on-duty
-
-        Count on-duty users
-
-        Foreach till user count:
-            - Increment seq
-            - Check vacation of seq. If so, repeat until number of on-duty users
-
-        :return: incremented seq
-    """
-    Logger.debug('Finding next on-duty user (sequence)')
-
-    # Check if nobody is on-duty
-    if is_nobody_on_duty():
-        Logger.debug('...... Nobody is on-duty')
-        return -1
-
-    max_seq = get_max_seq()
-    cur_seq = get_current_seq()
-
-    # Check if only one is on-duty
-    if max_seq == 1:
-        user = get_user_by_seq(cur_seq)
-        Logger.debug('...... Currently only {} is on-duty (Seq {})'.format(user.name, cur_seq))
-        return 1
-
-    # Current seq is set to -1
-    elif cur_seq < 0:
-        Logger.debug('...... Currently nobody is on duty.  Reset the sequence to 0')
-        cur_seq = 0
-
-    else:
-        cur_user = get_user_by_seq(cur_seq)
-        Logger.debug('...... Currently {} is on-duty. Will move to the next on-duty user. (Seq {})'
-                    .format(cur_user.name, cur_seq))
-
-    next_seq = cur_seq
-    exit_loop = False
-
-    for i in range(max_seq):
-        if exit_loop:
+        # If no user is found, reset to zero
+        if next_user is None:
+            next_rotation = 0
             break
 
-        next_seq = 1 if next_seq >= max_seq else next_seq + 1
-        vacations = get_vac_by_seq(next_seq)
-
-        if len(vacations) == 0:
+        # If selected user is in vacation, increment rotation seq
+        if next_user.get('is_vacation', False):
+            next_rotation += 1
+        else:
             break
 
-        for j, vac in enumerate(vacations):
-            is_vacation = vac.start_date <= datetime.now() <= vac.end_date
+    # Update current rotation
+    set_current_rotation(next_rotation)
 
-            if is_vacation:
-                next_user = get_user_by_seq(next_seq)
-                Logger.debug('...... {} is on vacation today. Will move to the next on-duty user. (Seq {})'
-                            .format(next_user.name, next_seq))
-                break
-            elif j == len(vacations) - 1:
-                exit_loop = True
-
-    final_user = get_user_by_seq(next_seq)
-    Logger.debug('...... {} is the next on-duty user. (Seq {})'.format(final_user.name, next_seq))
-    return next_seq
+    return next_rotation
 
 
-# endregion
+def get_current_user():
+    current_seq = get_current_rotation()
+    return mongo.db.users.find_one({'seq': current_seq})
 
-# region GET - Vacation
-
-
-def get_vac_by_seq(seq):
-    # type: (int) -> list[Vacation]
-
-    return session.query(Vacation).join(
-        User, Vacation.userid == User.id
-    ).filter(
-        User.seq == seq
-    ).all()
-
-
-def is_nobody_on_duty():
-    # type: () -> bool
-
-    # Check if nobody is on-duty
-    user_count = count_on_duty()
-    if user_count == 0:
-        return True
-
-    # Check if everybody is vacation
-    on_duty_users = User.query.filter(User.on_duty == True).all()
-
-    on_vacation = False
-
-    for u in on_duty_users:
-        vac = Vacation.query.filter(Vacation.userid == u.id).first()
-        if vac is None:
-            return False
-
-        on_vacation = vac.start_date <= datetime.now() <= vac.end_date
-
-        if not on_vacation:
-            return False
-
-    return on_vacation
-
-
-def is_on_vacation(seq):
-    # type: (int) -> bool
-
-    vac = get_vac_by_seq(seq)
-    for v in vac:
-        if v.start_date <= datetime.now() <= v.end_date:
-            return True
-
-    return False
-
-
-# endregion
-
-# region Config
-
-
-def get_config():
-    # type: () -> Config
-    return Config.query.first()
-
-
-def update_email_config(address, name, subject, body):
-    data = {
-        'email_from_address': address,
-        'email_from_name': name,
-        'email_subject': subject,
-        'email_body': body
-    }
-
-    Config.query.update(data)
-    session.commit()
-    Logger.info('Updated email config.  Data => {}'.format(data))
-
-
-# endregion
 
 # region Holiday
 
 
-def get_holiday():
-    # type: () -> list[Holiday]
-
-    return Holiday.query.all()
-
-
-def is_holiday():
-    # type: () -> bool
-    holiday = get_holiday()
-
-    for h in holiday:
-        start = datetime(h.start_date.year, h.start_date.month, h.start_date.day)
-        end = datetime(h.end_date.year, h.end_date.month, h.end_date.day, 23, 59, 59)
-
-        if start < datetime.today() < end:
-            return True
-
-    return False
+def upasert_holiday(date, remarks):
+    utc_diff = datetime.utcnow() - datetime.now()
+    utc = isoparse(date) + utc_diff
+    return mongo.db.holidays.update_one(
+        {'date': utc},
+        {
+            '$set': {
+                'date': utc,
+                'remarks': remarks,
+                'holiday_id': shortuuid.random(6)
+            }
+        },
+        upsert=True
+    )
 
 
-def add_holiday(start_date, end_date, remarks):
-    # type: (datetime, datetime, str) -> None
+def get_holidays():
+    data = mongo.db.holidays.find().sort('date')
+    utc_diff = datetime.utcnow() - datetime.now()
+    result = []
+    for d in data:
+        result.append({
+            'holiday_id': d.get('holiday_id'),
+            'date': d.get('date') - utc_diff,
+            'remarks': d.get('remarks')
+        })
 
-    session.add(Holiday(start_date=start_date, end_date=end_date, remarks=remarks))
-    session.commit()
+    return result
 
 
-def delete_holiday(id):
-    # type: (int) -> None
+def is_holiday_now() -> bool:
+    holidays = get_holidays()
+    is_holiday = False
+    for h in holidays:
+        is_holiday = h['date'].strftime('%x') == datetime.now().strftime('%x')
+        if is_holiday:
+            break
 
-    Holiday.query.filter(Holiday.id == id).delete()
-    session.commit()
+    return is_holiday
 
+
+def delete_holiday(holiday_id):
+    return mongo.db.holidays.delete_one({'holiday_id': holiday_id})
 
 # endregion
 
-# region UPDATE
+
+def add_vacation(email, start_date, end_date, remarks):
+    start_datetime = parse(start_date)
+    end_datetime = parse(end_date).replace(hour=23, minute=59)
+    vacation_hash = _get_vacation_hash(email, start_datetime, end_datetime)
+
+    # Check existing vacation
+    vacation = get_vacation_by_hash(vacation_hash)
+
+    if vacation is not None:
+        raise KeyError('Start date and end date are duplicated')
+
+    result = mongo.db.users.update_one(
+        {'email': email},
+        {'$push': {
+            'vacations': {
+                'hash': vacation_hash,
+                'start_date': start_datetime,
+                'end_date': end_datetime,
+                'remarks': remarks
+            }
+        }}
+    )
+
+    _sync_vacation(email)
+    return result
 
 
-def move_next():
-    next_seq = get_next_seq()
-    Config.query.update({'current_seq': next_seq})
-    session.commit()
-    Logger.info('Moved to the next seq: {}'.format(next_seq))
+def get_vacation_by_hash(vacation_hash):
+    return mongo.db.users.find_one(
+        {'vacations.hash': vacation_hash}
+    )
 
 
-def reset_seq():
-    max_seq = session.query(func.max(User.seq).label("max_seq")).first().max_seq
+def delete_vacation(email, vacation_hash):
+    try:
+        result = mongo.db.users.update_one(
+            {'email': email},
+            {'$pull': {
+                'vacations': {
+                    'hash': vacation_hash
+                }
+            }},
+            upsert=False
+        )
+        _sync_vacation(email)
+        return result
 
-    if max_seq > 0:
-        for i in range(1, max_seq + 1):
-            if not is_on_vacation(i):
-                Config.query.update({'current_seq': i})
+    except Exception as e:
+        print(e)
+
+
+def get_all_settings():
+    result = mongo.db.settings.find_one()
+
+    if result is None:
+        result = {
+            'email_settings': {
+                'from_email': current_app.config.get('MAIL_DEFAULT_SENDER'),
+                'subject': current_app.config.get('MAIL_DEFAULT_SUBJECT'),
+                'body': 'Congratulations, ${display_name}!\r\n'
+                        'You are ISR support rotation today.\r\n'
+                        '----------\r\n'
+                        'Please maintain your vacation at ${app_url}'
+            }
+        }
+
+        mongo.db.settings.insert_one(result)
+
+    return result
+
+
+def get_email_settings():
+    result = get_all_settings().get('email_settings')
+    return result
+
+
+def update_email_settings(from_email, subject, body):
+    settings = get_all_settings()
+
+    email_settings = {
+        'email_settings': {
+            'from_email': from_email,
+            'subject': subject,
+            'body': body
+        }
+    }
+
+    return mongo.db.settings.find_one_and_update(
+        {'_id': settings['_id']},
+        {'$set': email_settings}
+    )
+
+# region Logging
+
+
+def get_log(limit=100):
+    result = mongo.db.logs.find().sort('timestamp', DESCENDING).limit(limit)
+    return result
+
+# endregion
+
+# region Private
+
+
+def _get_vacation_hash(email: str, start_date: datetime, end_date: datetime):
+    """
+    Create hash for vacation
+    :param email: email
+    :param start_date: datetime
+    :param end_date: datetime
+    :return: string
+    """
+    hash_key = f'{email}|{start_date}|{end_date}'.encode('utf-8')
+    return hashlib.md5(hash_key).hexdigest()
+
+
+def _sync_all_vacation() -> None:
+    """
+    Update is_vacation property based on vacations across all users
+    :return: None
+    """
+    users = get_all_user()
+    for usr in users:
+        _sync_vacation(usr['email'])
+
+    pass
+
+
+def _sync_vacation(email) -> None:
+    """
+    Update is_vacation property based on vacations
+    :param email:
+    :return: None
+    """
+    usr = get_user(email)
+    now = datetime.now()
+    is_vacation = False
+
+    if usr.get('vacations'):
+        for vacation in usr.get('vacations'):
+            is_vacation = vacation.get('end_date') > now > vacation.get('start_date')
+            if is_vacation:
                 break
-    else:
-        Config.query.update({'current_seq': -1})
 
-    session.commit()
+    if usr.get('is_vacation') is None or usr.get('is_vacation') != is_vacation:
+        mongo.db.users.update_one(
+            {'email': usr['email']},
+            {'$set': {'is_vacation': is_vacation}}
+        )
 
-
-# endregion
-
-# region DELETE
-
-def delete_vacation(vacation_id):
-    session.query(Vacation).filter(Vacation.id == vacation_id).delete()
-    session.commit()
-
-# endregion
-
-# region Log
-
-
-def get_log():
-    # type: () -> list[Log]
-    return Log.query.all()
-
-
-def write_log(level, message):
-    session.add(Log(level, message))
-    session.commit()
-
+    pass
 
 # endregion
 

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>{% block title %}{% endblock %} | ISR Rotation</title>
+        <!-- Compiled and minified CSS -->
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!-- dragula -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css"/>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+    {% endblock %}
+</head>
+<body class="indigo lighten-5">
+
+<!-- Dropdown Structure -->
+<ul id="dropdown-settings" class="dropdown-content">
+    <li>
+        <a href="{{ url_for('main.holiday') }}">Holidays</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.email_settings') }}">Email</a>
+    </li>
+    <li>
+        <a href="{{ url_for('main.system_log') }}">System Log</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+        <a href="{{ url_for('main.auth_tester') }}">Auth. Tester</a>
+    </li>
+</ul>
+
+<nav class="light-blue" style="margin-bottom: 3rem;">
+    <div class="container">
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo">ISR Rotation</a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+{#                <li>#}
+{#                    <a href="{{ url_for('main.edit_user', email=g.user.username) }}" class="tooltipped" data-tooltip="View & Edit User Data">#}
+{#                        <i class="material-icons left">person</i>{{ g.user.display_name }}#}
+{#                    </a>#}
+{#                </li>#}
+                <li>
+                    <a class="dropdown-trigger" href="#!" data-target="dropdown-settings" data-tooltip="Settings">
+                        <i class="material-icons left">settings</i>
+                        Settings
+                    </a>
+                </li>
+{#                <li>#}
+{#                    <a href="{{ url_for('main.logout') }}" class="tooltipped" data-tooltip="Logout">#}
+{#                        <i class="material-icons">power_settings_new</i>#}
+{#                    </a>#}
+{#                </li>#}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+<div id="content">
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</div>
+
+<div id="footer">
+    {% block footer %}{% endblock %}
+</div>
+
+{% block scripts %}
+    <!-- Compiled and minified JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <!-- axios -->
+    <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+    <!-- moment.js -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script>
+        (function () {
+            //
+            // Initialize all of the Materialize Components
+            //
+            M.AutoInit();
+
+            //
+            // Display flash messages
+            //
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    (function () {
+                        let msg = [];
+                        {{ 'msg = ' + messages|tojson|safe + ';' }}
+                        if (msg.length > 0) {
+                            msg.forEach(function (m) {
+                                M.toast({html: m, classes: 'pink'});
+                            });
+                        }
+                    })();
+                {% endif %}
+            {% endwith %}
+        })();
+    </script>
+{% endblock %}
+</body>
+</html>

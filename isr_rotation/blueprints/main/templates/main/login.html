@@ -1,0 +1,66 @@
+{% extends '/main/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="row" xmlns="http://www.w3.org/1999/html">
+        <div class="col s12 m6 offset-m3">
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-title">Login</div>
+
+                    <form method="POST">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">alternate_email</i>
+                                {{ form.username() }}<label>Company Email</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <i class="material-icons prefix">lock</i>
+                                {{ form.password() }}{{ form.password.label() }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <label>{{ form.remember_me() }}<span>Remember</span></label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <button class="btn waves-effect waves-light right light-blue" id="submit" name="submit" type="submit">
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                        {{ form.hidden_tag() }}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        //
+        // Display login errors
+        //
+        {% with errors = form.errors.get('password') %}
+            {% if errors %}
+                (function(){
+                    let loginErrMessage = [];
+                    {{ 'loginErrMessage =' + errors|tojson|safe + ';' }}
+                    if (loginErrMessage.length > 0) {
+                        loginErrMessage.forEach(function(msg) {
+                            M.toast({html: msg, classes: 'pink'});
+                        });
+                    }
+                })();
+            {% endif %}
+        {% endwith %}
+    </script>
+{% endblock %}
+
