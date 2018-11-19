@@ -1,8 +1,12 @@
 SECRET_KEY = ''
-DEBUG = False
+DEBUG = True
+ENABLE_WEEKEND = True
+#
+# Login
+#
 DEBUG_BYPASS_LOGIN = False
-DEBUG_BYPASS_USERNAME = ''
-ENABLE_WEEKEND = False
+DEBUG_BYPASS_USERNAME = ''   # Example: your@email.com
+ADMINS = []     # Example: ['your@email.com', 'anyone@email.com']
 #
 # Log level.  Enter DEBUG or INFO
 #

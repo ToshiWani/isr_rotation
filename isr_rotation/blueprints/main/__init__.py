@@ -18,7 +18,7 @@ def before_request():
 
 
 @bp.route('/', methods=['GET'])
-@login_required
+# @login_required
 def home():
     on_duty_users = sorted(db.get_all_on_duty_user(), key=lambda u: u.get('seq'))
     off_duty_users = db.get_all_off_duty_user()
@@ -37,7 +37,7 @@ def home():
 
 
 @bp.route('/add-user', methods=['POST'])
-@login_required
+# @login_required
 def add_user():
     email = request.form.get('email')
     display_name = request.form.get('display_name')
@@ -122,7 +122,7 @@ def login_post():
 
 
 @bp.route("/logout")
-@login_required
+# @login_required
 def logout():
     logout_user()
     return redirect('/')
@@ -133,7 +133,7 @@ def logout():
 # region Settings
 
 @bp.route('/holiday', methods=['GET', 'POST'])
-@login_required
+# @login_required
 def holiday():
     if request.method == 'POST':
         date = request.form.get('date')

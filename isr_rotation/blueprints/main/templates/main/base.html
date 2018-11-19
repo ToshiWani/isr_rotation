@@ -39,22 +39,22 @@
         <div class="nav-wrapper">
             <a href="/" class="brand-logo">ISR Rotation</a>
             <ul id="nav-mobile" class="right hide-on-med-and-down">
-                <li>
-                    <a href="{{ url_for('main.edit_user', email=g.user.username) }}" class="tooltipped" data-tooltip="View & Edit User Data">
-                        <i class="material-icons left">person</i>{{ g.user.display_name }}
-                    </a>
-                </li>
+{#                <li>#}
+{#                    <a href="{{ url_for('main.edit_user', email=g.user.username) }}" class="tooltipped" data-tooltip="View & Edit User Data">#}
+{#                        <i class="material-icons left">person</i>{{ g.user.display_name }}#}
+{#                    </a>#}
+{#                </li>#}
                 <li>
                     <a class="dropdown-trigger" href="#!" data-target="dropdown-settings" data-tooltip="Settings">
                         <i class="material-icons left">settings</i>
                         Settings
                     </a>
                 </li>
-                <li>
-                    <a href="{{ url_for('main.logout') }}" class="tooltipped" data-tooltip="Logout">
-                        <i class="material-icons">power_settings_new</i>
-                    </a>
-                </li>
+{#                <li>#}
+{#                    <a href="{{ url_for('main.logout') }}" class="tooltipped" data-tooltip="Logout">#}
+{#                        <i class="material-icons">power_settings_new</i>#}
+{#                    </a>#}
+{#                </li>#}
             </ul>
         </div>
     </div>
