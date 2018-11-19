@@ -5,6 +5,7 @@ import isr_rotation.authentication as authentication
 from flask_login import current_user, login_user, login_required, logout_user
 from flask_ldap3_login.forms import LDAPLoginForm
 from isr_rotation.caching import get_cache, set_cache
+import textwrap
 
 
 bp = Blueprint('main', __name__, template_folder='templates')
@@ -82,18 +83,23 @@ def delete_user():
 # region Login
 
 
-@bp.route('/auth', methods=['GET', 'POST'])
-def auth():
-    user = None
+@bp.route('/auth-tester', methods=['GET', 'POST'])
+def auth_tester():
+    formatted_data = dict()
     result = None
+
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         result = authentication.authenticate(email, password)
-        user = authentication.get_ldap_user(email)
-        photo = user.get('thumbnailPhoto')
+        ldap_user_data = authentication.get_ldap_user(email)
 
-    return render_template('/main/authentication.html', user=user, result=result)
+        for key in ldap_user_data:
+            formatted_data.update({
+                key: textwrap.shorten(str(ldap_user_data[key]), width=2000)
+            })
+
+    return render_template('/main/auth-tester.html', ldap_user_data=formatted_data, result=result)
 
 
 @bp.route('/login', methods=['GET'])
