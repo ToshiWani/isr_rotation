@@ -68,16 +68,6 @@ def update_user(email):
         return render_template('/main/update_user.html', user=user, ldap_user=ldap_user)
 
 
-@bp.route('/delete_user', methods=['GET', 'POST'])
-def delete_user():
-    users = db.get_all_user()
-    if request.method == 'POST':
-        emails = request.form.getlist('delete')
-        db.delete_users(emails)
-        return redirect('/')
-    else:
-        return render_template('/main/delete_user.html', users=users)
-
 # endregion
 
 # region Login
