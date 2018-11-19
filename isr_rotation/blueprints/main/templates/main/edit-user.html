@@ -1,0 +1,70 @@
+{% extends '/main/base.html' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Edit User</span>
+                    <div class="row">
+                        <form method="post" class="col s12">
+                            <div class="row">
+                                <div class="input-field col s12 m12 l12 xl4">
+                                    <i class="material-icons prefix">alternate_email</i>
+                                    <label for="input-email">Email</label>
+                                    <input disabled value="{{ user.email }}" type="email" name="email"
+                                           id="input-email"/>
+                                </div>
+                                <div class="input-field col s12 m12 l12 xl4">
+                                    <i class="material-icons prefix">face</i>
+                                    <label for="input-password">Display Name</label>
+                                    <input value="{{ user.display_name }}" type="text" name="display-name"
+                                           id="input-display-name">
+                                </div>
+                                <div class="input-field col s12 m12 l12 xl4">
+                                    <button class="btn btn-small light-blue" type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <table class="table-small-font">
+                                <tbody>
+                                <tr>
+                                    <th>ID</th>
+                                    <td>{{ user._id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Email</th>
+                                    <td>{{ user.email }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Display Name</th>
+                                    <td>{{ user.display_name }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Current Sequence</th>
+                                    <td>{{ user.seq }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Vacations</th>
+                                    <td>
+                                        {% for v in user.vacations %}
+                                            <div>{{ v.start_date }} - {{ v.end_date }}</div>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -51,21 +51,18 @@ def add_user():
     return redirect('/')
 
 
-@bp.route('/update_user/<email>', methods=['GET', 'POST'])
-def update_user(email):
+@bp.route('/edit-user/<email>', methods=['GET', 'POST'])
+def edit_user(email):
     if request.method == 'POST':
-        db.update_user(email, request.form.get('display_name'))
+        display_name = request.form.get('display-name', '')
+        if display_name != '':
+            db.update_user(email, request.form.get('display-name'))
+
         return redirect('/')
+
     else:
-        cache_key = 'ldap_user_' + email
-        ldap_user = get_cache(cache_key)
-
-        if ldap_user is None:
-            ldap_user = authentication.get_ldap_user(email)
-            set_cache(cache_key, ldap_user)
-
         user = db.get_user(email)
-        return render_template('/main/update_user.html', user=user, ldap_user=ldap_user)
+        return render_template('/main/edit-user.html', user=user)
 
 
 # endregion
@@ -75,19 +72,26 @@ def update_user(email):
 
 @bp.route('/auth-tester', methods=['GET', 'POST'])
 def auth_tester():
-    formatted_data = dict()
+    formatted_data = None
     result = None
 
     if request.method == 'POST':
         email = request.form.get('email')
         password = request.form.get('password')
         result = authentication.authenticate(email, password)
-        ldap_user_data = authentication.get_ldap_user(email)
 
-        for key in ldap_user_data:
-            formatted_data.update({
-                key: textwrap.shorten(str(ldap_user_data[key]), width=2000)
-            })
+        cache_key = f'formatted_ldap_user_data_{email}'
+        formatted_data = get_cache(cache_key)
+
+        if formatted_data is None:
+            ldap_user_data = authentication.get_ldap_user(email)
+            formatted_data = dict()
+            for key in ldap_user_data:
+                formatted_data.update({
+                    key: textwrap.shorten(str(ldap_user_data[key]), width=2000)
+                })
+
+            set_cache(cache_key, formatted_data)
 
     return render_template('/main/auth-tester.html', ldap_user_data=formatted_data, result=result)
 

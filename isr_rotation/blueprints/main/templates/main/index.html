@@ -50,7 +50,7 @@
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
                                     <i class="material-icons pink-text right">delete</i>
                                 </a>
-                                <a href="{{ url_for('main.update_user', email=[u.email]) }}">
+                                <a href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
                                 <a href="{{ url_for('main.vacation', email=u.email) }}">
@@ -93,7 +93,7 @@
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
                                     <i class="material-icons pink-text right">delete</i>
                                 </a>
-                                <a href="{{ url_for('main.update_user', email=[u.email]) }}">
+                                <a href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
                                 <a href="{{ url_for('main.vacation', email=u.email) }}">
