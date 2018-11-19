@@ -4,6 +4,7 @@ from dateutil.parser import isoparse, parse
 from datetime import timedelta, timezone, datetime
 import shortuuid
 from typing import Optional
+import hashlib
 
 mongo = PyMongo()
 
@@ -47,6 +48,7 @@ def is_everyone_on_vacation() -> bool:
     Check if all on-duty users are on vacation
     :return:
     """
+    _sync_all_vacation()
     users = get_all_on_duty_user()
     result = True
     for u in users:
@@ -102,11 +104,12 @@ def delete_users(emails):
 
 
 def update_rotation(email, is_duty, seq):
-    _sync_vacation(email)
-    return mongo.db.users.update_one(
+    result = mongo.db.users.update_one(
         {'email': email},
         {'$set': {'is_duty': is_duty, 'seq': seq}}
     )
+    _sync_vacation(email)
+    return result
 
 
 def get_current_rotation() -> int:
@@ -247,29 +250,28 @@ def delete_holiday(holiday_id):
 
 
 def add_vacation(email, start_date, end_date, remarks):
-    start_date = parse(start_date)
-    end_date = parse(end_date).replace(hour=23, minute=59)
-    vacation_hash = _get_vacation_hash(email, start_date, end_date)
+    start_datetime = parse(start_date)
+    end_datetime = parse(end_date).replace(hour=23, minute=59)
+    vacation_hash = _get_vacation_hash(email, start_datetime, end_datetime)
 
     # Check existing vacation
     vacation = get_vacation_by_hash(vacation_hash)
 
     if vacation is not None:
-        raise KeyError
+        raise KeyError('Start date and end date are duplicated')
 
-    utf_start_date = _get_utf_midnight(start_date)
-    utf_end_date = _get_utf_midnight(end_date)
     result = mongo.db.users.update_one(
         {'email': email},
         {'$push': {
             'vacations': {
                 'hash': vacation_hash,
-                'start_date': utf_start_date,
-                'end_date': utf_end_date,
+                'start_date': start_datetime,
+                'end_date': end_datetime,
                 'remarks': remarks
             }
         }}
     )
+
     _sync_vacation(email)
     return result
 
@@ -347,13 +349,8 @@ def get_log(limit=100):
 
 # region Private
 
-def _get_utf_midnight(date):
-    utc_diff = datetime.utcnow() - datetime.now()
-    result = date + utc_diff
-    return result
 
-
-def _get_vacation_hash(email, start_date, end_date):
+def _get_vacation_hash(email: str, start_date: datetime, end_date: datetime):
     """
     Create hash for vacation
     :param email: email
@@ -361,8 +358,8 @@ def _get_vacation_hash(email, start_date, end_date):
     :param end_date: datetime
     :return: string
     """
-    hash_key = (email, start_date, end_date)
-    return str(hash(hash_key))
+    hash_key = f'{email}|{start_date}|{end_date}'.encode('utf-8')
+    return hashlib.md5(hash_key).hexdigest()
 
 
 def _sync_all_vacation() -> None:
@@ -398,13 +395,6 @@ def _sync_vacation(email) -> None:
             {'email': usr['email']},
             {'$set': {'is_vacation': is_vacation}}
         )
-
-    pass
-
-
-def _sync_seq():
-    _sync_all_vacation()
-    on_duty_users = get_all_on_duty_user()
 
     pass
 

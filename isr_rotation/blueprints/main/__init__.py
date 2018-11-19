@@ -161,8 +161,8 @@ def post_vacation(email):
 
     try:
         result = db.add_vacation(email, start_date, end_date, remarks)
-    except KeyError:
-        flash('Start date and end date are duplicated')
+    except KeyError as e:
+        flash(e.args)
 
     user = db.get_user(email)
     return render_template('/main/vacation.html', user=user)
