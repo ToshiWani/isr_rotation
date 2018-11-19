@@ -308,7 +308,10 @@ def get_all_settings():
             'email_settings': {
                 'from_email': current_app.config.get('MAIL_DEFAULT_SENDER'),
                 'subject': current_app.config.get('MAIL_DEFAULT_SUBJECT'),
-                'body': 'Congratulations, { display_name }! You are ISR support rotation today.'
+                'body': 'Congratulations, ${display_name}!\r\n'
+                        'You are ISR support rotation today.\r\n'
+                        '----------\r\n'
+                        'Please maintain your vacation at ${app_url}'
             }
         }
 

@@ -43,7 +43,7 @@
                 <div id="inactive-user-list" class="collection">
                     {% for u in off_duty_users %}
                         <div class="collection-item" data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
-                            <i class="material-icons left">drag_indicator</i>
+                            <i class="material-icons left cursor-grab">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
                                 <a class="modal-trigger delete-user" href="#deleteUserModal"
@@ -75,7 +75,7 @@
                     {% for u in on_duty_users %}
                         <div class="collection-item {{ "grey lighten-4 grey-text" if u.is_vacation }}"
                              data-email="{{ u.email }}" data-seq="{{ u.seq }}" data-uid="{{ u._id }}">
-                            <i class="material-icons left">drag_indicator</i>
+                            <i class="material-icons left cursor-grab">drag_indicator</i>
                             <span>
                                 {{ u.display_name }}
                                 {% if u.is_vacation %}

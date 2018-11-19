@@ -16,3 +16,7 @@ table#system-log .system-log-datetime{
 table#table-ldap-data td{
     word-break: break-all;
 }
+
+.cursor-grab{
+    cursor: grab;
+}
