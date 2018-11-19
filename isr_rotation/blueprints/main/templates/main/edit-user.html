@@ -54,7 +54,7 @@
                                     <th>Vacations</th>
                                     <td>
                                         {% for v in user.vacations %}
-                                            <div>{{ v.start_date }} - {{ v.end_date }}</div>
+                                            <div>{{ v.start_date }} - {{ v.end_date }} ({{ v.remarks }})</div>
                                         {% endfor %}
                                     </td>
                                 </tr>
