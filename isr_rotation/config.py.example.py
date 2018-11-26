@@ -1,6 +1,6 @@
 SECRET_KEY = ''
 DEBUG = True
-ENABLE_WEEKEND = True
+ENABLE_WEEKEND = False
 #
 # Login
 #
