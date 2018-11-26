@@ -190,9 +190,10 @@ isr_rotation
 │   ├── static
 │   └── user.py
 ├── isr_rotation.wsgi
+├── move_next.sh
 ├── README.md
-└── ...
-
+├── requirements.txt
+└── resend.sh
 ```
 
 
