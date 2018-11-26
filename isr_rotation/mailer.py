@@ -63,7 +63,7 @@ def send_custom(recipients, subject, body):
 def get_email_placeholders() -> dict:
     current_user = db.get_current_user()
     return {
-        'display_name': current_user.get('display_name'),
+        'display_name': current_user.get('display_name', ''),
         'app_url': request.host_url,
         'timestamp': datetime.now().strftime('%b %d, %Y %X %Z')
     }
