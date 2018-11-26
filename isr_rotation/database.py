@@ -203,15 +203,16 @@ def get_current_user():
 
 
 def upasert_holiday(date, remarks):
-    utc_diff = datetime.utcnow() - datetime.now()
-    utc = isoparse(date) + utc_diff
+    start_datetime = parse(date)
+    holiday_id = _get_holiday_hash(start_datetime)
+
     return mongo.db.holidays.update_one(
-        {'date': utc},
+        {'holiday_id': holiday_id},
         {
             '$set': {
-                'date': utc,
+                'date': start_datetime,
                 'remarks': remarks,
-                'holiday_id': shortuuid.random(6)
+                'holiday_id': holiday_id
             }
         },
         upsert=True
@@ -220,12 +221,11 @@ def upasert_holiday(date, remarks):
 
 def get_holidays():
     data = mongo.db.holidays.find().sort('date')
-    utc_diff = datetime.utcnow() - datetime.now()
     result = []
     for d in data:
         result.append({
             'holiday_id': d.get('holiday_id'),
-            'date': d.get('date') - utc_diff,
+            'date': d.get('date'),
             'remarks': d.get('remarks')
         })
 
@@ -352,6 +352,16 @@ def get_log(limit=100):
 # endregion
 
 # region Private
+
+
+def _get_holiday_hash(holiday_date: datetime):
+    """
+    Create hash for holiday
+    :param date:
+    :return:
+    """
+    hash_key = f'{holiday_date}'.encode('utf-8')
+    return hashlib.md5(hash_key).hexdigest()
 
 
 def _get_vacation_hash(email: str, start_date: datetime, end_date: datetime):
