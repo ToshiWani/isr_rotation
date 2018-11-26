@@ -304,6 +304,7 @@ def get_all_settings():
     result = mongo.db.settings.find_one()
 
     if result is None:
+        # Seeding default settings
         result = {
             'email_settings': {
                 'from_email': current_app.config.get('MAIL_DEFAULT_SENDER'),

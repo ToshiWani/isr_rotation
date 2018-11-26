@@ -6,10 +6,6 @@ from isr_rotation import database as db
 
 bp = Blueprint('api', __name__)
 
-#
-# TODO: Rename end points for complying REST naming conventions
-#
-
 
 @bp.route('/rotation', methods=['POST'])
 def save_rotation():

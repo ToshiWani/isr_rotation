@@ -1,2 +1,0 @@
-graft flask_rotation/static
-graft flask_rotation/templates
