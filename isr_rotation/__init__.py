@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask
 from isr_rotation.blueprints.main import bp as main_bp
 from isr_rotation.blueprints.api import bp as api_bp
 from isr_rotation.database import mongo
@@ -15,6 +15,7 @@ app.config.from_object('isr_rotation.config')
 host = app.config.get('MONGO_URI', 'mongodb://localhost:27017')
 database_name = app.config.get('MONGO_HANDLER_DATABASE_NAME', 'isr_rotation')
 handler = MongoHandler(host=host, database_name=database_name)
+handler.setLevel(app.config.get('LOG_LEVEL', 'INFO'))
 app.logger.addHandler(handler)
 
 # MongoDB
@@ -33,5 +34,5 @@ app.register_blueprint(main_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
 
 
-app.logger.info('Hello! ISR Rotation has been started!')
+app.logger.debug('Hello! ISR Rotation has been started!')
 
