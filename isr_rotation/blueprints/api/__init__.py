@@ -118,6 +118,21 @@ def resend_email():
         return jsonify({'status': 'ok', 'message': str(type(e))})
 
 
+@bp.route('/logs', methods=['DELETE'])
+def purge_log():
+    """
+    GET: /logs?days_old=365
+    :return: json
+    """
+    try:
+        days_old = request.args.get('days_old', default=0, type=int)
+        rows = db.purge_log(days_old)
+        return jsonify({'status': 'ok', 'rows_affected': rows})
+    except Exception as e:
+        msg = ', '.join(e.args)
+        return jsonify({'status': 'ok', 'message': msg})
+
+
 def _encoding_mongo(mongo_obj):
     result = []
     for kvp in mongo_obj:

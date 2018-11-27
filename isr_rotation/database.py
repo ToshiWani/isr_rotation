@@ -347,6 +347,18 @@ def get_log(limit=100):
     result = mongo.db.logs.find().sort('timestamp', DESCENDING).limit(limit)
     return result
 
+
+def purge_log(days_older: int) -> int:
+    result = 0
+    if days_older > 0:
+        older_than = datetime.now() - timedelta(days=days_older)
+        logs = mongo.db.logs
+        query = logs.delete_many({'timestamp': {'$lt': older_than}})
+        result = query.raw_result.get('n', 0)
+
+    return result
+
+
 # endregion
 
 # region Private
