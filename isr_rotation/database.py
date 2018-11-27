@@ -311,8 +311,6 @@ def get_all_settings():
                 'subject': current_app.config.get('MAIL_DEFAULT_SUBJECT'),
                 'body': 'Congratulations, ${display_name}!\r\n'
                         'You are ISR support rotation today.\r\n'
-                        '----------\r\n'
-                        'Please maintain your vacation at ${app_url}'
             }
         }
 

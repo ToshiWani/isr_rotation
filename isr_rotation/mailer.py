@@ -1,4 +1,4 @@
-from flask import request, current_app
+from flask import current_app
 from flask_mail import Mail, Message
 from isr_rotation import database as db
 from string import Template
@@ -65,7 +65,6 @@ def get_email_placeholders() -> dict:
     display_name = current_user.get('display_name', '') if current_user else ''
     return {
         'display_name': display_name,
-        'app_url': request.host_url,
         'timestamp': datetime.now().strftime('%b %d, %Y %X %Z')
     }
 
