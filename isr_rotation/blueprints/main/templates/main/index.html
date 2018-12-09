@@ -7,11 +7,11 @@
 
     <div class="row">
         <div class="col s12">
-            <a class="waves-effect btn-flat" href="#" id="btn-move-next">
+            <a class="waves-effect btn-flat must-save" href="#" id="btn-move-next">
                 <i class="material-icons left">fast_forward</i>
                 Move Next
             </a>
-            <a class="waves-effect btn-flat" href="#" id="btn-resend-email">
+            <a class="waves-effect btn-flat must-save" href="#" id="btn-resend-email">
                 <i class="material-icons left">send</i>
                 Resend Email
             </a>
@@ -46,14 +46,14 @@
                             <i class="material-icons left cursor-grab">drag_indicator</i>
                             {{ u.display_name }}
                             <div class="secondary-content">
-                                <a class="modal-trigger delete-user" href="#deleteUserModal"
+                                <a class="modal-trigger delete-user must-save" href="#deleteUserModal"
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
                                     <i class="material-icons pink-text right">delete</i>
                                 </a>
-                                <a href="{{ url_for('main.edit_user', email=u.email) }}">
+                                <a class="must-save" href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
-                                <a href="{{ url_for('main.vacation', email=u.email) }}">
+                                <a class="must-save" href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
                                 </a>
                             </div>
@@ -89,14 +89,14 @@
                                     <span class="light-blue-text left">Next</span>
                                 {% endif %}
 
-                                <a class="modal-trigger delete-user" href="#deleteUserModal"
+                                <a class="modal-trigger delete-user must-save" href="#deleteUserModal"
                                    data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
                                     <i class="material-icons pink-text right">delete</i>
                                 </a>
-                                <a href="{{ url_for('main.edit_user', email=u.email) }}">
+                                <a class="must-save" href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
                                 </a>
-                                <a href="{{ url_for('main.vacation', email=u.email) }}">
+                                <a class="must-save" href="{{ url_for('main.vacation', email=u.email) }}">
                                     <i class="material-icons right">schedule</i>
                                 </a>
                             </div>
@@ -186,6 +186,17 @@
                 document.getElementById('inactive-user-list'),
                 document.getElementById('active-user-list')
             ]);
+            drake.on('drop', function(el, target, source, sibling){
+                // Disable some buttons
+                var buttons = document.getElementsByClassName('must-save');
+                console.log(buttons);
+                for (var i = 0; buttons.length > i; i++){
+                    buttons[i].classList.add('disabled');
+                }
+
+                M.toast({html: 'Please SAVE or RESET to complete this action', classes:'pink'});
+            });
+
 
             document.getElementById('btn-reset').addEventListener('click', function () {
                 location.reload();
