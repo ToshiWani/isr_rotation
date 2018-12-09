@@ -35,7 +35,7 @@
                 <div class="card-content">
                     <div class="card-title">
                         Inactive
-                        <a href="#add-user-modal" class="modal-trigger">
+                        <a href="#add-user-modal" class="modal-trigger must-save">
                             <i class="material-icons right tooltipped" data-tooltip="Add New User">person_add</i>
                         </a>
                     </div>
@@ -52,9 +52,6 @@
                                 </a>
                                 <a class="must-save" href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
-                                </a>
-                                <a class="must-save" href="{{ url_for('main.vacation', email=u.email) }}">
-                                    <i class="material-icons right">schedule</i>
                                 </a>
                             </div>
                         </div>
@@ -88,16 +85,11 @@
                                 {% elif u.seq == next_rotation %}
                                     <span class="light-blue-text left">Next</span>
                                 {% endif %}
-
-                                <a class="modal-trigger delete-user must-save" href="#deleteUserModal"
-                                   data-email="{{ u.email }}" data-displayname="{{ u.display_name }}">
-                                    <i class="material-icons pink-text right">delete</i>
+                                <a class="must-save" href="{{ url_for('main.vacation', email=u.email) }}">
+                                    <i class="material-icons right">schedule</i>
                                 </a>
                                 <a class="must-save" href="{{ url_for('main.edit_user', email=u.email) }}">
                                     <i class="material-icons right">edit</i>
-                                </a>
-                                <a class="must-save" href="{{ url_for('main.vacation', email=u.email) }}">
-                                    <i class="material-icons right">schedule</i>
                                 </a>
                             </div>
                         </div>
