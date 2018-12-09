@@ -178,14 +178,13 @@
                 document.getElementById('inactive-user-list'),
                 document.getElementById('active-user-list')
             ]);
+
             drake.on('drop', function(el, target, source, sibling){
-                // Disable some buttons
+                // Disable some buttons until refresh the page
                 var buttons = document.getElementsByClassName('must-save');
-                console.log(buttons);
                 for (var i = 0; buttons.length > i; i++){
                     buttons[i].classList.add('disabled');
                 }
-
                 M.toast({html: 'Please SAVE or RESET to complete this action', classes:'pink'});
             });
 
