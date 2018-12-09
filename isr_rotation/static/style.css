@@ -20,3 +20,9 @@ table#table-ldap-data td{
 .cursor-grab{
     cursor: grab;
 }
+
+.must-save.disabled *{
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
